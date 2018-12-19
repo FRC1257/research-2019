@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Robot extends IterativeRobot {
 
@@ -31,6 +33,7 @@ public class Robot extends IterativeRobot {
         DriveTrain = new DifferentrialDrive(Left, Right);
 
         Controller = new XboxController(1);
+        
     }
 
     void teleopInit {
@@ -38,7 +41,10 @@ public class Robot extends IterativeRobot {
     }
 
     void teleopPeriodic {
-        
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight"); 
+        NetworkTableEntry tv = table.getEntry("tv");
+
+        // Basic Teleop Drive Code
         if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kLeft);
@@ -51,6 +57,32 @@ public class Robot extends IterativeRobot {
             double y = Controller.getX(GenericHID.Hand.kRight);
             double x = Controller.getY(GenericHID.Hand.kLeft);
             DriveTrain.arcadeDrive(y, x);
-        } 
+        }
+
+        // Limelight vision code
+        if(Controller.getBButton() && tv.getDouble(0) == 1){ //If b button pressed and a target on screen
+          visionCorrect();
+        }
+    }
+
+    void visionCorrect(){
+      
+      NetworkTableEntry tx = table.getEntry("tx");
+      float tx = tx.getDouble(0);
+      
+      float min_command = 0.05; //Minimum motor input to move robot in case P can't do it 
+      float Kp = -0.03; // for PI
+      float heading_error = tx;
+      float steering_adjust = 0.0;
+      if (tx > 1.0){
+        steering_adjust = Kp * heading_error - min_command;
+      } 
+      else if (tx < 1.0)
+      {
+                steering_adjust = Kp * heading_error + min_command;
+      }
+
+      DriveTrain.arcadeDrive(0, steering_adjust);
+}
     }
 }
