@@ -8,16 +8,10 @@
 package frc.robot;
 
 import edu.wpi.cscore.AxisCamera;
-import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.networktables.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Robot extends IterativeRobot {
 
@@ -31,7 +25,7 @@ public class Robot extends IterativeRobot {
     XboxController Controller;
 
     @Override
-    void RobotInit () {
+    public void robotInit () {
         FrontRight = new WPI_TalonSRX(2);
         FrontLeft = new WPI_TalonSRX(3);
         BackRight = new WPI_TalonSRX(4);
@@ -40,21 +34,21 @@ public class Robot extends IterativeRobot {
         Right = new SpeedControllerGroup(FrontRight, BackRight);
         Left = new SpeedControllerGroup(FrontLeft, BackLeft);
 
-        DriveTrain = new DifferentrialDrive(Left, Right);
+        DriveTrain = new DifferentialDrive(Left, Right);
 
         Controller = new XboxController(1);
 
     }
 
     @Override
-    void teleopInit () {
+    public void teleopInit () {
 
     }
 
     @Override
-    void teleopPeriodic () {
+    public void teleopPeriodic () {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight"); 
-        NetworkTableEntry tv = table.getEntry("tv");
+        NetworkTableEntry tvE = table.getEntry("tv");
 
         // Basic Teleop Drive Code
         if(Controller.getAButton()) {
@@ -71,21 +65,23 @@ public class Robot extends IterativeRobot {
             DriveTrain.arcadeDrive(y, x);
         }
 
-        // Limelight vision code
-        if(Controller.getBButton() && tv.getDouble(0) == 1){ //If b button pressed and a target on screen
-          visionCorrect();
+        // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
+        if(Controller.getBButton()){ //If b button pressed and a target on screen
+          visionCorrect(table);
         }
+        
     }
   
-  void visionCorrect(){
+    public void visionCorrect(NetworkTable table){
 
-      NetworkTableEntry tx = table.getEntry("tx");
-      float tx = tx.getDouble(0);
+      NetworkTableEntry txE = table.getEntry("tx");
+      double tx = txE.getDouble(0);
 
-      float min_command = 0.05; //Minimum motor input to move robot in case P can't do it 
-      float Kp = -0.03; // for PI
-      float heading_error = tx;
-      float steering_adjust = 0.0;
+      double min_command = 0.05; //Minimum motor input to move robot in case P can't do it 
+      double Kp = -0.03; // for PI
+      double heading_error = tx;
+      double steering_adjust = 0.0;
+
       if (tx > 1.0){
         steering_adjust = Kp * heading_error - min_command;
       } 
@@ -94,9 +90,7 @@ public class Robot extends IterativeRobot {
         steering_adjust = Kp * heading_error + min_command;
       }
 
-      DriveTrain.arcadeDrive(0, steering_adjust);
+      DriveTrain.arcadeDrive(0, - steering_adjust);
     }
-  }
-    
 }
 
