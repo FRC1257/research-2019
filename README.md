@@ -3,4 +3,5 @@
 ## Branches
  * limelight
    * vision can be found here
- 
+ * easypath
+   * easypath allows paths for autonomous to be made quickly and easily and then used by the robot
