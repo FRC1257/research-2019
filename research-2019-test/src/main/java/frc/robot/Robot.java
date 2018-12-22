@@ -93,14 +93,26 @@ public class Robot extends IterativeRobot {
       DriveTrain.arcadeDrive(0, - steering_adjust);
     }
 
+    public void findObject(NetworkTable table){ // Spins until it finds the target
+        NetworkTableEntry tvE = table.getEntry("tv");
+        double tv = tvE.getDouble(0);
+        if(tv == 0.0){ // No target on screen, then spin
+            DriveTrain.arcadeDrive(0, 0.3); 
+        }
+        else if(tv == 1.0){ // Target on screen, then aim on it
+            angleCorrect(table);
+        }
+    }
+
     public double distanceFromObject(NetworkTable table, double objectHeight, double cameraHeight, double cameraAngle){ //d = (h2-h1) / tan(a1+a2)
         NetworkTableEntry tyE = table.getEntry("ty");
         return((objectHeight - cameraHeight) / Math.tan(cameraAngle + tyE.getDouble(0))); // Use trig knowing the height of the object and angle to find distnace
     } 
     
-    //One time function used to determine the angle at which the camera is mounted at
-    //The robot must be put a distance away from the target that is KNOWN and is EXACT
     public void findCameraAngle(NetworkTable table, double objectHeight, double cameraHeight, double distance){ // a1 = arctan((h2 - h1)/d) - a2
+        //One time function used to determine the angle at which the camera is mounted at
+        //After the angle is found, it is put in the code permanently in Constants.java and never edited. (unless the limelight is moved physically on the robot)
+        //The robot must be put a distance away from the target that is KNOWN and is EXACT
         NetworkTableEntry tyE = table.getEntry("ty");
         double cameraAngle = Math.atan((objectHeight - cameraHeight) / distance) - tyE.getDouble(0);
         System.out.println(cameraAngle); // Not sure if works, shuffleboard could be used
