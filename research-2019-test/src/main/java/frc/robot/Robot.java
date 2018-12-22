@@ -66,31 +66,40 @@ public class Robot extends IterativeRobot {
         }
 
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
-        if(Controller.getBButton()){ //If b button pressed and a target on screen
-          visionCorrect(table);
+        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5){ //If b button pressed and a target on screen
+          angleCorrect(table);
         }
         
     }
   
-    public void visionCorrect(NetworkTable table){
+    public void angleCorrect(NetworkTable table){
 
       NetworkTableEntry txE = table.getEntry("tx");
-      double tx = txE.getDouble(0);
+      double tx = txE.getDouble(0); //Gets the angle of how far away from the corsshair the object is
 
       double min_command = 0.05; //Minimum motor input to move robot in case P can't do it 
-      double Kp = -0.03; // for PI
-      double heading_error = tx;
+      double Kp = -0.03; // for PID
+      double heading_error = tx; 
       double steering_adjust = 0.0;
 
-      if (tx > 1.0){
+      if (tx > 1.0){ // If tx > 1.0, do normal pid
         steering_adjust = Kp * heading_error - min_command;
       } 
-      else if (tx < 1.0)
+      else if (tx < 1.0) // If tx 1.0, the motor will not be able to move the robot due to friction, so min_command is added to give it the minimum speed to move
       {
         steering_adjust = Kp * heading_error + min_command;
       }
 
       DriveTrain.arcadeDrive(0, - steering_adjust);
+    }
+
+    public void distanceFromObject(NetworkTable table, double cameraHeight; double objectHeight, double cameraAngle){ //d = (h2-h1) / tan(a1+a2)
+
+    } 
+    
+    //One time function used to determine the angle at which the camera is mounted at pricesly
+    public void findCameraAngle(){
+
     }
 }
 
