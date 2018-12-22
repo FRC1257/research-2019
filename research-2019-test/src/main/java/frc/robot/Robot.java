@@ -23,6 +23,9 @@ public class Robot extends IterativeRobot {
     SpeedControllerGroup Left;
     DifferentialDrive DriveTrain;
     XboxController Controller;
+    Target target1; //Vision
+    public static double cameraHeight;
+    public static double cameraAngle;
 
     @Override
     public void robotInit () {
@@ -38,6 +41,10 @@ public class Robot extends IterativeRobot {
 
         Controller = new XboxController(1);
 
+        // Vision
+        target1 = new Target(48, 36); //height of 4 ft, desired distance of 3 ft
+        cameraHeight = 8; //placeholder fix-ITNOWHJIFOSOIFEJS
+        cameraAngle = 0; //Correct
     }
 
     @Override
@@ -66,8 +73,14 @@ public class Robot extends IterativeRobot {
         }
 
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
-        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5){ //If b button pressed and a target on screen
-          angleCorrect(table);
+        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5){ //If left trigger pressed and a target on screen then turn to it
+            angleCorrect(table);
+        }
+        if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.5){
+            shoot(table, target1);
+        }
+        if(Controller.getXButton()){
+            findObject(table);
         }
         
     }
@@ -93,7 +106,23 @@ public class Robot extends IterativeRobot {
       DriveTrain.arcadeDrive(0, - steering_adjust);
     }
 
-    public void findObject(NetworkTable table){ // Spins until it finds the target
+    public void getInDistance(NetworkTable table, Target target){ // Target is a class with the information about the specific target
+    //Target exists so that if the robot has two different targets it needs to get in distance of, it can refer to target's info
+    //and see the height of the target, its desired distance, launch power, etc. 
+        double KpDistance = 0.1;
+        double desiredDistance = target.m_desiredDistance; // 60 inches - uses trig so it does not matter which unit as long as unit is uniform
+        double currentDistance = distanceFromObject(table, target.m_targetHeight, cameraHeight, cameraAngle); //cameraHeight and cameraAngle are constants
+        double distanceError = desiredDistance - currentDistance;
+        if(distanceError > 10){ // 10 inches of error space for PID
+            double driving_adjust = KpDistance * distanceError;
+            DriveTrain.arcadeDrive(driving_adjust, 0);
+        }
+        else{
+            angleCorrect(table); //Haven't tried running both at once, but I don't want our motors to explode so probably best to do this
+        }
+    }
+
+    public void findObject(NetworkTable table){ // Spins until the robot finds the target
         NetworkTableEntry tvE = table.getEntry("tv");
         double tv = tvE.getDouble(0);
         if(tv == 0.0){ // No target on screen, then spin
@@ -117,5 +146,21 @@ public class Robot extends IterativeRobot {
         double cameraAngle = Math.atan((objectHeight - cameraHeight) / distance) - tyE.getDouble(0);
         System.out.println(cameraAngle); // Not sure if works, shuffleboard could be used
     }
-}
 
+    //Handles all vision firing and other stuff
+    public void shoot(NetworkTable table, Target target){ //Sample code that the robot fired the projectile
+        //Haven't tried running both getInDistance and angleCorrect at once, but I don't want our motors to explode so probably best to do this
+        getInDistance(table, target); //calls on angleCorrect when it is in the correct spot
+    }
+    
+    class Target{
+        double m_targetHeight;
+        double m_desiredDistance;
+        double launchPower = 0; // placeholder
+    
+        public Target(double targetHeight, double desiredDistance){
+            m_targetHeight = targetHeight;
+            m_desiredDistance = desiredDistance;
+        }
+    }
+}
