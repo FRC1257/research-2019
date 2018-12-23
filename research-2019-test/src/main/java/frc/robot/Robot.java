@@ -85,7 +85,7 @@ public class Robot extends IterativeRobot {
         
     }
   
-    public void angleCorrect(NetworkTable table){
+    public double angleCorrect(NetworkTable table){
 
       NetworkTableEntry txE = table.getEntry("tx");
       double tx = txE.getDouble(0); //Gets the angle of how far away from the corsshair the object is
@@ -103,23 +103,22 @@ public class Robot extends IterativeRobot {
         steering_adjust = Kp * heading_error + min_command;
       }
 
-      DriveTrain.arcadeDrive(0, - steering_adjust);
+     return(-steering_adjust);
     }
 
-    public void getInDistance(NetworkTable table, Target target){ // Target is a class with the information about the specific target
+    public double getInDistance(NetworkTable table, Target target){ // Target is a class with the information about the specific target
     //Target exists so that if the robot has two different targets it needs to get in distance of, it can refer to target's info
     //and see the height of the target, its desired distance, launch power, etc. 
         double KpDistance = 0.1;
         double desiredDistance = target.m_desiredDistance; // 60 inches - uses trig so it does not matter which unit as long as unit is uniform
         double currentDistance = distanceFromObject(table, target.m_targetHeight, cameraHeight, cameraAngle); //cameraHeight and cameraAngle are constants
         double distanceError = desiredDistance - currentDistance;
+        double driving_adjust = 0;
         if(distanceError > 10){ // 10 inches of error space for PID
-            double driving_adjust = KpDistance * distanceError;
-            DriveTrain.arcadeDrive(driving_adjust, 0);
+            driving_adjust = KpDistance * distanceError;
+            
         }
-        else{
-            angleCorrect(table); //Haven't tried running both at once, but I don't want our motors to explode so probably best to do this
-        }
+        return(driving_adjust);
     }
 
     public void findObject(NetworkTable table){ // Spins until the robot finds the target
@@ -149,8 +148,7 @@ public class Robot extends IterativeRobot {
 
     //Handles all vision firing and other stuff
     public void shoot(NetworkTable table, Target target){ //Sample code that the robot fired the projectile
-        //Haven't tried running both getInDistance and angleCorrect at once, but I don't want our motors to explode so probably best to do this
-        getInDistance(table, target); //calls on angleCorrect when it is in the correct spot
+        DriveTrain.arcadeDrive(getInDistance(table, target), angleCorrect(table)); // getInDistance and angleCorrect return values to correct the robot.
     }
     
     class Target{
