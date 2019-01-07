@@ -5,5 +5,7 @@
    * vision code merged on January 2nd, 2019 could be found here. This is because the vision branch is being used most often.
  * limelight
    * vision can be found here
+ * limelight-backup
+   * This is a backup of the old 2018 WPILib limelight vision code. It is kept for just in case the new code does not work for easy restoration.
  * easypath
    * easypath allows paths for autonomous to be made quickly and easily and then used by the robot
