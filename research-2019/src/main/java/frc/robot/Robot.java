@@ -29,17 +29,18 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit () {
-        FrontRight = new WPI_TalonSRX(2);
-        FrontLeft = new WPI_TalonSRX(3);
-        BackRight = new WPI_TalonSRX(4);
-        BackLeft = new WPI_TalonSRX(5);
+        
+        FrontLeft = new WPI_TalonSRX(1);
+        BackLeft = new WPI_TalonSRX(2);
+        BackRight = new WPI_TalonSRX(3);
+        FrontRight = new WPI_TalonSRX(4);
 
         Right = new SpeedControllerGroup(FrontRight, BackRight);
         Left = new SpeedControllerGroup(FrontLeft, BackLeft);
 
         DriveTrain = new DifferentialDrive(Left, Right);
 
-        Controller = new XboxController(1);
+        Controller = new XboxController(0);
     }
 
     @Override
@@ -56,15 +57,15 @@ public class Robot extends TimedRobot {
         if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(y, x);
+            DriveTrain.arcadeDrive(-y, x);
         } else if(Controller.getBumper(GenericHID.Hand.kLeft)) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kRight);
-            DriveTrain.arcadeDrive(y, x);
+            DriveTrain.arcadeDrive(-y, x);
         } else if(Controller.getBumper(GenericHID.Hand.kRight)) {
             double y = Controller.getX(GenericHID.Hand.kRight);
             double x = Controller.getY(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(y, x);
+            DriveTrain.arcadeDrive(-y, x);
         }
 
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
@@ -77,7 +78,12 @@ public class Robot extends TimedRobot {
         if(Controller.getXButton()){
             Vision.findObject(table, DriveTrain);
         }
-        
+        if(Controller.getYButton()){
+            Vision.findCameraAngle(table, 120);
+        }
+        if(Controller.getBButton()){
+            DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
+        }
     }
   
 }
