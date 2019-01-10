@@ -11,3 +11,5 @@
    * easypath allows paths for autonomous to be made quickly and easily and then used by the robot
  * double-solenoid
    * double-solenoid has code to test whether double solenoids work properly.
+
+##### If anyone has any questions or needs explaining, please contact Adam Zamlynny on slack or in real life
