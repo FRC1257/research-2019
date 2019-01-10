@@ -34,7 +34,7 @@ public class Vision{
     public static double getInDistance(NetworkTable table){ 
         double KpDistance = 0.1;
         double desiredDistance = Constants.target1_distance; // 60 inches - uses trig so it does not matter which unit as long as unit is uniform
-        double currentDistance = distanceFromObject(table); //cameraHeight and cameraAngle are constants
+        double currentDistance = tableDistanceFromObject(table); //cameraHeight and cameraAngle are constants
         double distanceError = desiredDistance - currentDistance;
         double driving_adjust = 0;
         if(distanceError > 10){ // 10 inches of error space for PID
@@ -64,14 +64,14 @@ public class Vision{
         NetworkTableEntry taE = table.getEntry("ta");
         double ta = taE.getDouble(0);
         double minDifference = 10000;
-        int minIndex = 119;
+        double minIndex = 119;
         for(int i = 0; i < Constants.measurementAmount - 1; i++){
             if(Constants.distanceToPercent[i] - ta < minDifference){
                 minDifference = Constants.distanceToPercent[i] - ta;
                 minIndex = 1;
             }
         }
-        return(Constants.distanceToPercent[minIndex]);
+        return(minIndex);
     }
 
     public static void findCameraAngle(NetworkTable table, double distance){ // a1 = arctan((h2 - h1)/d) - a2
