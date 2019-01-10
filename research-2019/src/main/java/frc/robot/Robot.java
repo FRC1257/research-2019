@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import java.util.ArrayList;
 
 public class Robot extends TimedRobot {
 
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
     SpeedControllerGroup Left;
     DifferentialDrive DriveTrain;
     XboxController Controller;
+    ArrayList<Double> DistanceToArea;
 
     @Override
     public void robotInit () {
@@ -41,6 +43,8 @@ public class Robot extends TimedRobot {
         DriveTrain = new DifferentialDrive(Left, Right);
 
         Controller = new XboxController(0);
+
+        DistanceToArea = new ArrayList<Double>();
     }
 
     @Override
@@ -84,6 +88,23 @@ public class Robot extends TimedRobot {
         if(Controller.getBButton()){
             DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
         }
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kRight)){
+            addDistancePercent(table);
+        }
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kLeft)){
+            printDistancePercent();
+        }
     }
-  
+    public void addDistancePercent(NetworkTable table){
+        NetworkTableEntry taE = table.getEntry("ta");
+        DistanceToArea.add(taE.getDouble(0));
+    }
+
+public void printDistancePercent(){
+    for(int i = 0; i < DistanceToArea.size() - 1; i++){
+        System.out.print(DistanceToArea.get(i) + ", ");
+    }
+        System.out.println(DistanceToArea.get(DistanceToArea.size() - 1));
+    }
 }
+

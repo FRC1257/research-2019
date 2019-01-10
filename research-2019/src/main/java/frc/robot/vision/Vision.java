@@ -55,11 +55,18 @@ public class Vision{
         }
     }
 
+    //Not used in this season because the targets are close to the ground
     public static double distanceFromObject(NetworkTable table){ //d = (h2-h1) / tan(a1+a2)
         NetworkTableEntry tyE = table.getEntry("ty");
         return((Constants.target1_height - Constants.cameraHeight) / Math.toDegrees(Math.tan(Constants.cameraAngle + tyE.getDouble(0)))); // Use trig knowing the height of the object and angle to find distnace
     } 
     
+    // public static double tableDistanceFromObject(NetworkTable table){
+    //     NetworkTableEntry taE = table.getEntry("ta");
+    //     double ta = taE.getDouble;
+        
+    // }
+
     public static void findCameraAngle(NetworkTable table, double distance){ // a1 = arctan((h2 - h1)/d) - a2
         //One time function used to determine the angle at which the camera is mounted at
         //After the angle is found, it is put in the code permanently in Constants.java and never edited. (unless the limelight is moved physically on the robot)
