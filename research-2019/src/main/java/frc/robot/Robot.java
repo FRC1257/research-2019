@@ -54,8 +54,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic () {
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight"); 
-        NetworkTableEntry tvE = table.getEntry("tv");
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
         // Basic Teleop Drive Code
         if(Controller.getAButton()) {
