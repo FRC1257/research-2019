@@ -12,12 +12,12 @@ public class Vision{
 
      public static double angleCorrect(NetworkTable table){
 
-      NetworkTableEntry txE = table.getEntry("tx");
-      double tx = txE.getDouble(0); //Gets the angle of how far away from the corsshair the object is
+      NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
+      double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
 
       double min_command = 0.05; //Minimum motor input to move robot in case P can't do it 
-      double Kp = -0.03; // for PID
-      double heading_error = tx; 
+      double Kp = -0.03; // for PID (pcontrol)
+      double heading_error = tx; // How far from target
       double steering_adjust = 0.0;
 
       if (tx > 2.0){ // If tx > 1.0, do normal pid
@@ -32,10 +32,9 @@ public class Vision{
     }
 
     public static double getInDistance(NetworkTable table){ 
-        double KpDistance = 0.1;
-        double desiredDistance = Constants.target1_distance; // 60 inches - uses trig so it does not matter which unit as long as unit is uniform
+        double KpDistance = 0.1; // For p control
         double currentDistance = tableDistanceFromObject(table); //cameraHeight and cameraAngle are constants
-        double distanceError = desiredDistance - currentDistance;
+        double distanceError = Constants.desiredDistance - currentDistance;
         double driving_adjust = 0;
         if(distanceError > 10){ // 10 inches of error space for PID
             driving_adjust = KpDistance * distanceError;
@@ -55,6 +54,7 @@ public class Vision{
         }
     }
 
+   //trig method, not viable for 2019 since target is low 
     public static double distanceFromObject(NetworkTable table){ //d = (h2-h1) / tan(a1+a2)
         NetworkTableEntry tyE = table.getEntry("ty");
         return((Constants.target1_height - Constants.cameraHeight) / Math.toDegrees(Math.tan(Constants.cameraAngle + tyE.getDouble(0)))); // Use trig knowing the height of the object and angle to find distnace
@@ -64,7 +64,7 @@ public class Vision{
         NetworkTableEntry taE = table.getEntry("ta");
         double ta = taE.getDouble(0);
         double minDifference = 10000;
-        double minIndex = 119;
+        double minIndex = Constants.measurementAmount - 1;
         for(int i = 0; i < Constants.measurementAmount - 1; i++){
             if(Constants.distanceToPercent[i] - ta < minDifference){
                 minDifference = Constants.distanceToPercent[i] - ta;
