@@ -66,7 +66,7 @@ public class Vision{
         double minDifference = 10000;
         double minIndex = Constants.measurementAmount - 1;
         for(int i = 0; i < Constants.measurementAmount - 1; i++){
-            if(Constants.distanceToPercent[i] - ta < minDifference){
+            if(Constants.distanceToPercent[i] - ta < minDifference && Constants.distanceToPercent[i] - ta > 0){
                 minDifference = Constants.distanceToPercent[i] - ta;
                 minIndex = 1;
             }

@@ -33,9 +33,9 @@ public class Robot extends TimedRobot {
     public void robotInit () {
         
         FrontLeft = new WPI_TalonSRX(1);
-        BackLeft = new WPI_TalonSRX(2);
-        BackRight = new WPI_TalonSRX(3);
-        FrontRight = new WPI_TalonSRX(4);
+        BackLeft = new WPI_TalonSRX(3);
+        BackRight = new WPI_TalonSRX(6);
+        FrontRight = new WPI_TalonSRX(2);
 
         Right = new SpeedControllerGroup(FrontRight, BackRight);
         Left = new SpeedControllerGroup(FrontLeft, BackLeft);
