@@ -5,6 +5,7 @@ import frc.robot.constants.*;
 
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.drive.*;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,8 +16,8 @@ public class Vision{
       NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
       double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
 
-      double min_command = 0.05; //Minimum motor input to move robot in case P can't do it 
-      double Kp = -0.03; // for PID (pcontrol)
+      double min_command = SmartDashboard.getNumber("min_command", 0.05); //Minimum motor input to move robot in case P can't do it 
+      double Kp = SmartDashboard.getNumber("kP", -0.03); // for PID (pcontrol)
       double heading_error = tx; // How far from target
       double steering_adjust = 0.0;
 

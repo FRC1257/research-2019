@@ -10,6 +10,7 @@ package frc.robot;
 import frc.robot.vision.*;
 import frc.robot.constants.*;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.*;
@@ -45,6 +46,10 @@ public class Robot extends TimedRobot {
         Controller = new XboxController(0);
 
         DistanceToArea = new ArrayList<Double>();
+
+        SmartDashboard.putNumber("kP", -0.3);
+        SmartDashboard.putNumber("min_command", 0.05); 
+
     }
 
     @Override
