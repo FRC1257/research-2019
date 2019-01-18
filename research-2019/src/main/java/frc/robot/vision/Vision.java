@@ -61,16 +61,23 @@ public class Vision{
     
     public static double tableDistanceFromObject(NetworkTable table){
         NetworkTableEntry taE = table.getEntry("ta");
+        NetworkTableEntry tvE = table.getEntry("tv");
         double ta = taE.getDouble(0);
+        double tv = tvE.getDouble(0);
         double minDifference = 10000;
         double minIndex = Constants.measurementAmount - 1;
-        for(int i = 0; i < Constants.measurementAmount - 1; i++){
-            if(Constants.distanceToPercent[i] - ta < minDifference && Constants.distanceToPercent[i] - ta > 0){
-                minDifference = Constants.distanceToPercent[i] - ta;
-                minIndex = 1;
+        if(tv == 1.0){ // If the target is on screen
+            for(int i = 0; i < Constants.measurementAmount - 1; i++){
+                if(Constants.distanceToPercent[i] - ta < minDifference && Constants.distanceToPercent[i] - ta > 0){
+                    minDifference = Constants.distanceToPercent[i] - ta;
+                    minIndex = i;
+                }
             }
+            return(minIndex);
         }
-        return(minIndex);
+        else{
+            return(-100); //Value of -100 might need changing
+        }
     }
 
     public static void findCameraAngle(NetworkTable table, double distance){ // a1 = arctan((h2 - h1)/d) - a2

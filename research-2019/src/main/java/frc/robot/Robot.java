@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
             Vision.shoot(table, DriveTrain);
         }
         if(Controller.getXButton()){
-            Vision.findObject(table, DriveTrain);
+            // Vision.findObject(table, DriveTrain);
         }
         if(Controller.getYButton()){
             Vision.findCameraAngle(table, 120);
