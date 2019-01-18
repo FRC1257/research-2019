@@ -1,6 +1,5 @@
 package frc.robot.vision;
 
-import frc.robot.Robot;
 import frc.robot.constants.*;
 
 import edu.wpi.first.networktables.*;

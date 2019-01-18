@@ -8,7 +8,7 @@
 package frc.robot;
 
 import frc.robot.vision.*;
-import frc.robot.constants.*;
+import frc.robot.constants.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.*;
@@ -99,14 +99,14 @@ public class Robot extends TimedRobot {
             addDistancePercent(table);
             rightStickPressed = true;
         }
-        if(Controller.getStickButtonReleased(GenericHID.Hand.kRight) && rightStickPressed == true){
+        else if(Controller.getStickButtonReleased(GenericHID.Hand.kRight) && rightStickPressed == true){
             rightStickPressed = false;
         }
         if(Controller.getStickButtonPressed(GenericHID.Hand.kLeft) && leftStickPressed == false){
             printDistancePercent();
             leftStickPressed = true;
         }
-        if(Controller.getStickButtonReleased(GenericHID.Hand.kLeft) && leftStickPressed == true){
+        else if(Controller.getStickButtonReleased(GenericHID.Hand.kLeft) && leftStickPressed == true){
             leftStickPressed = false;
         }
     }
