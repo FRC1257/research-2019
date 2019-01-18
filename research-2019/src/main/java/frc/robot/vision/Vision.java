@@ -5,8 +5,6 @@ import frc.robot.constants.*;
 
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.drive.*;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision{
