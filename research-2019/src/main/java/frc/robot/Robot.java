@@ -28,7 +28,9 @@ public class Robot extends TimedRobot {
     DifferentialDrive DriveTrain;
     XboxController Controller;
     ArrayList<Double> DistanceToArea;
-
+    Boolean leftStickPressed;
+    Boolean rightStickPressed;
+    
     @Override
     public void robotInit () {
         
@@ -49,6 +51,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("kP", -0.3);
         SmartDashboard.putNumber("min_command", 0.05); 
 
+        leftStickPressed = false;
+        rightStickPressed = false;
     }
 
     @Override
@@ -91,11 +95,19 @@ public class Robot extends TimedRobot {
         if(Controller.getBButton()){
             DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
         }
-        if(Controller.getStickButtonPressed(GenericHID.Hand.kRight)){
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kRight) && rightStickPressed == false){
             addDistancePercent(table);
+            rightStickPressed = true;
         }
-        if(Controller.getStickButtonPressed(GenericHID.Hand.kLeft)){
+        if(Controller.getStickButtonReleased(GenericHID.Hand.kRight) && rightStickPressed == true){
+            rightStickPressed = false;
+        }
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kLeft) && leftStickPressed == false){
             printDistancePercent();
+            leftStickPressed = true;
+        }
+        if(Controller.getStickButtonReleased(GenericHID.Hand.kLeft) && leftStickPressed == true){
+            leftStickPressed = false;
         }
     }
  
