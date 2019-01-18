@@ -2,7 +2,8 @@
 ### If you are coming here and are confused as to why there is no code here or only outdated code, check the other branches than master!
 ## Branches
  * master
-   * vision code merged on January 2nd, 2019 could be found here. This is because the vision branch is being used most often.
+   * Vision code could be found here. This is because the vision branch is being used most often. 
+   * *MIGHT NOT BE UP TO DATE, SO CHECK LIMELIGHT BRANCH*
  * limelight
    * vision can be found here
  * limelight-backup
