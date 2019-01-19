@@ -13,8 +13,8 @@ public class Vision{
       NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
       double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
 
-      double min_command = SmartDashboard.getNumber("min_command", 0.05); //Minimum motor input to move robot in case P can't do it 
-      double Kp = SmartDashboard.getNumber("kP", -0.01); // for PID (pcontrol)
+      double min_command = 0.05; //Minimum motor input to move robot in case P can't do it 
+      double Kp = -0.03; // for PID (pcontrol)
       double heading_error = tx; // How far from target
       double steering_adjust = 0.0;
 
@@ -30,13 +30,14 @@ public class Vision{
     }
 
     public static double getInDistance(NetworkTable table){ 
-        double KpDistance = 0.01; // For p control
+        double KpDistance = 0.5; // For p control
         double currentDistance = tableDistanceFromObject(table); //cameraHeight and cameraAngle are constants
-        double distanceError = Constants.desiredDistance - currentDistance;
+        double distanceError = currentDistance - Constants.desiredDistance;
         double driving_adjust = 0;
-        if(distanceError > 10){ // 10 inches of error space for PID
+        if(distanceError > 0){ // 10 inches of error space for PID
             driving_adjust = KpDistance * distanceError;
         }
+        System.out.println(driving_adjust);
         return(driving_adjust);
     }
 
@@ -71,6 +72,7 @@ public class Vision{
                     minIndex = i;
                 }
             }
+            
             return(minIndex);
         }
         else{

@@ -39,10 +39,10 @@ public class Robot extends TimedRobot {
         BackRight = new WPI_TalonSRX(1);
         FrontRight = new WPI_TalonSRX(2);
 
-        // Right = new SpeedControllerGroup(FrontRight, BackRight);
-        // Left = new SpeedControllerGroup(FrontLeft, BackLeft);
+        Right = new SpeedControllerGroup(FrontRight, BackRight);
+        Left = new SpeedControllerGroup(FrontLeft, BackLeft);
 
-        // DriveTrain = new DifferentialDrive(Left, Right);
+        DriveTrain = new DifferentialDrive(Left, Right);
 
         Controller = new XboxController(0);
 
@@ -68,15 +68,15 @@ public class Robot extends TimedRobot {
         if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(y, x);
+            DriveTrain.arcadeDrive(-y, x);
         } else if(Controller.getBumper(GenericHID.Hand.kLeft)) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kRight);
-            DriveTrain.arcadeDrive(y, x);
+            DriveTrain.arcadeDrive(-y, x);
         } else if(Controller.getBumper(GenericHID.Hand.kRight)) {
             double y = Controller.getX(GenericHID.Hand.kRight);
             double x = Controller.getY(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(y, x);
+            DriveTrain.arcadeDrive(-y, x);
         }
 
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
