@@ -30,11 +30,11 @@ public class Vision{
     }
 
     public static double getInDistance(NetworkTable table){ 
-        double KpDistance = 0.5; // For p control
+        double KpDistance = 0.1; // For p control
         double currentDistance = tableDistanceFromObject(table); //cameraHeight and cameraAngle are constants
         double distanceError = currentDistance - Constants.desiredDistance;
         double driving_adjust = 0;
-        if(distanceError > 0){ // 10 inches of error space for PID
+        if(distanceError > 3){ // 3 inches of error space for PID
             driving_adjust = KpDistance * distanceError;
         }
         System.out.println(driving_adjust);
