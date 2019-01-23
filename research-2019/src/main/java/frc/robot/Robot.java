@@ -8,7 +8,7 @@
 package frc.robot;
 
 import frc.robot.vision.*;
-import frc.robot.constants.*;
+import frc.robot.constants.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.*;
@@ -28,13 +28,15 @@ public class Robot extends TimedRobot {
     DifferentialDrive DriveTrain;
     XboxController Controller;
     ArrayList<Double> DistanceToArea;
-
+    Boolean leftStickPressed;
+    Boolean rightStickPressed;
+    
     @Override
     public void robotInit () {
         
-        FrontLeft = new WPI_TalonSRX(1);
-        BackLeft = new WPI_TalonSRX(3);
-        BackRight = new WPI_TalonSRX(6);
+        FrontLeft = new WPI_TalonSRX(3);
+        BackLeft = new WPI_TalonSRX(6);
+        BackRight = new WPI_TalonSRX(1);
         FrontRight = new WPI_TalonSRX(2);
 
         Right = new SpeedControllerGroup(FrontRight, BackRight);
@@ -49,6 +51,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("kP", -0.3);
         SmartDashboard.putNumber("min_command", 0.05); 
 
+        leftStickPressed = false;
+        rightStickPressed = false;
     }
 
     @Override
@@ -83,7 +87,7 @@ public class Robot extends TimedRobot {
             Vision.shoot(table, DriveTrain);
         }
         if(Controller.getXButton()){
-            Vision.findObject(table, DriveTrain);
+            // Vision.findObject(table, DriveTrain);
         }
         if(Controller.getYButton()){
             Vision.findCameraAngle(table, 120);
@@ -91,12 +95,21 @@ public class Robot extends TimedRobot {
         if(Controller.getBButton()){
             DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
         }
-        if(Controller.getStickButtonPressed(GenericHID.Hand.kRight)){
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kRight) && rightStickPressed == false){
             addDistancePercent(table);
+            rightStickPressed = true;
         }
-        if(Controller.getStickButtonPressed(GenericHID.Hand.kLeft)){
+        else if(Controller.getStickButtonReleased(GenericHID.Hand.kRight) && rightStickPressed == true){
+            rightStickPressed = false;
+        }
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kLeft) && leftStickPressed == false){
             printDistancePercent();
+            leftStickPressed = true;
         }
+        else if(Controller.getStickButtonReleased(GenericHID.Hand.kLeft) && leftStickPressed == true){
+            leftStickPressed = false;
+        }
+
     }
  
     
