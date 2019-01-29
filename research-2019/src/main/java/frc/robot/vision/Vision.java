@@ -13,13 +13,13 @@ public class Vision{
       NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
       double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
 
-      double min_command = 0.06; //Minimum motor input to move robot in case P can't do it 
+      double min_command = 0.08; //Minimum motor input to move robot in case P can't do it 
       double Kp = -0.03; // for PID (pcontrol)
       double heading_error = tx; // How far from target
       double steering_adjust = 0.0;
 
       if (tx > 2.0){ // If tx > 1.0, do normal pid
-        steering_adjust = Kp * heading_error - min_command;
+        steering_adjust = Kp * heading_error;
       } 
       else if (tx < 2.0) // If tx 1.0, the motor will not be able to move the robot due to friction, so min_command is added to give it the minimum speed to move
       {
@@ -30,7 +30,9 @@ public class Vision{
     }
 
     public static double getInDistance(NetworkTable table){ 
-        double KpDistance = 0.09; // For p control
+        System.out.println("a");
+
+        double KpDistance = 0.04; // For p control
         double currentDistance = tableDistanceFromObject(table); //cameraHeight and cameraAngle are constants
         double distanceError = currentDistance - Constants.desiredDistance;
         double driving_adjust = 0;
@@ -59,6 +61,7 @@ public class Vision{
     } 
     
     public static double tableDistanceFromObject(NetworkTable table){
+        System.out.println("g");
         NetworkTableEntry taE = table.getEntry("ta");
         NetworkTableEntry tvE = table.getEntry("tv");
         double ta = taE.getDouble(0);
@@ -92,7 +95,10 @@ public class Vision{
 
     //Handles all vision firing and other stuff
     public static void shoot(NetworkTable table, DifferentialDrive DriveTrain){ //Sample code that the robot fired the projectile
-        DriveTrain.arcadeDrive(-getInDistance(table), angleCorrect(table)); // getInDistance and angleCorrect return values to correct the robot.
+        DriveTrain.arcadeDrive(getInDistance(table), angleCorrect(table)); // getInDistance and angleCorrect return values to correct the robot.
+        // table.getEntry("snapshot").set(1);
+        
     }
 
+    
 }
