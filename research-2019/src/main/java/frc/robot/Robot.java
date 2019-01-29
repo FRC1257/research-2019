@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
     ArrayList<Double> DistanceToArea;
     Boolean leftStickPressed;
     Boolean rightStickPressed;
+    boolean takingSnapshot;
     
     @Override
     public void robotInit () {
@@ -53,6 +54,7 @@ public class Robot extends TimedRobot {
 
         leftStickPressed = false;
         rightStickPressed = false;
+        takingSnapshot = false;
     }
 
     @Override
@@ -63,6 +65,9 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic () {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+        System.out.println("short " + table.getEntry("tshort").getDouble(0));
+        System.out.println("long " + table.getEntry("tlong ").getDouble(0));
+        System.out.println("ratio " + table.getEntry("tshort").getDouble(0)/table.getEntry("tlong ").getDouble(0));
 
         // Basic Teleop Drive Code
         if(Controller.getAButton()) {
@@ -116,6 +121,7 @@ public class Robot extends TimedRobot {
     public void addDistancePercent(NetworkTable table){
         NetworkTableEntry taE = table.getEntry("ta");
         DistanceToArea.add(taE.getDouble(0));
+        System.out.println(DistanceToArea.size());
     }	    
 
     public void printDistancePercent(){
