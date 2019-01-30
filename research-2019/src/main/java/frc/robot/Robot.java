@@ -70,9 +70,12 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic () {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        System.out.println("short " + table.getEntry("tshort").getDouble(0));
-        System.out.println("long " + table.getEntry("tlong ").getDouble(0));
-        System.out.println("ratio " + table.getEntry("tshort").getDouble(0)/table.getEntry("tlong ").getDouble(0));
+        // System.out.println("short " + table.getEntry("tshort").getDouble(0));
+        // System.out.println("long " + table.getEntry("tlong ").getDouble(0));
+        // System.out.println("ratio " + table.getEntry("tshort").getDouble(0)/table.getEntry("tlong ").getDouble(0));
+
+        driveSpeed = 0;
+        turnSpeed = 0;
 
         // Basic Teleop Drive Code
         if(Controller.getAButton()) {
@@ -88,20 +91,34 @@ public class Robot extends TimedRobot {
             driveSpeed = -y;
             turnSpeed = x;
         } else if(Controller.getBumper(GenericHID.Hand.kRight)) {
-            double y = Controller.getX(GenericHID.Hand.kRight);
-            double x = Controller.getY(GenericHID.Hand.kLeft);
+            double x = Controller.getX(GenericHID.Hand.kLeft);
+            double y = Controller.getY(GenericHID.Hand.kRight);
             // DriveTrain.arcadeDrive(-y, x);
             driveSpeed = -y;
             turnSpeed = x;
         }
-
+        if(Controller.getYButton()){ table.getEntry("pipeline").setNumber(0);
+        }
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
-        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5){ //If left trigger pressed and a target on screen then turn to it
+        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0){ //If left trigger pressed and a target on screen then turn to it
             // DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
+            if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) < 0.99 ){
+                table.getEntry("pipeline").setNumber(1); 
+            }
+            else{
+                table.getEntry("pipeline").setNumber(0);
+            }
+            
             turnSpeed += Vision.angleCorrect(table);
         }
+        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) == 0){
+            table.getEntry("pipeline").setNumber(0);
+        }
+
         if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.5){
-            Vision.shoot(table, DriveTrain);
+            // Vision.shoot(table, DriveTrain);
+            turnSpeed += Vision.angleCorrect(table);
+            driveSpeed += Vision.getInDistance(table);
         }
         if(Controller.getXButton()){
             // Vision.findObject(table, DriveTrain);
@@ -128,9 +145,10 @@ public class Robot extends TimedRobot {
             leftStickPressed = false;
         }
 
-        if(turnSpeed != 0 || driveSpeed != 0){
+        // if(turnSpeed != 0 || driveSpeed != 0){
             DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
-        }
+        // }
+        
     }
  
     public void addDistancePercent(NetworkTable table){

@@ -13,7 +13,7 @@ public class Vision{
       NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
       double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
 
-      double min_command = 0.08; //Minimum motor input to move robot in case P can't do it 
+      double min_command = 0.10; //Minimum motor input to move robot in case P can't do it 
       double Kp = -0.03; // for PID (pcontrol)
       double heading_error = tx; // How far from target
       double steering_adjust = 0.0;
