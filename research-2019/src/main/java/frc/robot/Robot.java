@@ -31,6 +31,8 @@ public class Robot extends TimedRobot {
     Boolean leftStickPressed;
     Boolean rightStickPressed;
     boolean takingSnapshot;
+    double driveSpeed;
+    double turnSpeed;
     
     @Override
     public void robotInit () {
@@ -55,6 +57,9 @@ public class Robot extends TimedRobot {
         leftStickPressed = false;
         rightStickPressed = false;
         takingSnapshot = false;
+
+        driveSpeed = 0;
+        turnSpeed = 0;
     }
 
     @Override
@@ -73,20 +78,27 @@ public class Robot extends TimedRobot {
         if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(-y, x);
+            // DriveTrain.arcadeDrive(-y, x);
+            driveSpeed = -y;
+            turnSpeed = x;
         } else if(Controller.getBumper(GenericHID.Hand.kLeft)) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kRight);
-            DriveTrain.arcadeDrive(-y, x);
+            // DriveTrain.arcadeDrive(-y, x);
+            driveSpeed = -y;
+            turnSpeed = x;
         } else if(Controller.getBumper(GenericHID.Hand.kRight)) {
             double y = Controller.getX(GenericHID.Hand.kRight);
             double x = Controller.getY(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(-y, x);
+            // DriveTrain.arcadeDrive(-y, x);
+            driveSpeed = -y;
+            turnSpeed = x;
         }
 
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5){ //If left trigger pressed and a target on screen then turn to it
-            DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
+            // DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
+            turnSpeed += Vision.angleCorrect(table);
         }
         if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.5){
             Vision.shoot(table, DriveTrain);
@@ -98,7 +110,8 @@ public class Robot extends TimedRobot {
             Vision.findCameraAngle(table, 120);
         }
         if(Controller.getBButton()){
-            DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
+            // DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
+            driveSpeed += Vision.getInDistance(table);
         }
         if(Controller.getStickButtonPressed(GenericHID.Hand.kRight) && rightStickPressed == false){
             addDistancePercent(table);
@@ -115,6 +128,9 @@ public class Robot extends TimedRobot {
             leftStickPressed = false;
         }
 
+        if(turnSpeed != 0 || driveSpeed != 0){
+            DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
+        }
     }
  
     
