@@ -133,7 +133,6 @@ public class Robot extends TimedRobot {
         }
     }
  
-    
     public void addDistancePercent(NetworkTable table){
         NetworkTableEntry taE = table.getEntry("ta");
         DistanceToArea.add(taE.getDouble(0));
