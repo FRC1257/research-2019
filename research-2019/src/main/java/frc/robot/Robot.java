@@ -128,8 +128,14 @@ public class Robot extends TimedRobot {
             table.getEntry("pipeline").setNumber(0);
         }
 
-        if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.5){
+        if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0){
             // Vision.shoot(table, DriveTrain);
+            if(Controller.getTriggerAxis(GenericHID.Hand.kRight) < 0.99 ){
+                table.getEntry("pipeline").setNumber(1); 
+            }
+            else{
+                table.getEntry("pipeline").setNumber(0);
+            }
             turnSpeed += Vision.angleCorrect(table, changeInAngle);
             driveSpeed += Vision.getInDistance(table);
         }
