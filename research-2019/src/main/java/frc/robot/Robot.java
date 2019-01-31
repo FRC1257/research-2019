@@ -9,6 +9,7 @@ package frc.robot;
 
 import frc.robot.vision.*;
 import frc.robot.constants.Constants;
+import frc.robot.util.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.*;
@@ -16,6 +17,9 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import java.util.ArrayList;
+import com.kauailabs.navx.frc.*;
+
+import edu.wpi.first.wpilibj.I2C.Port;
 
 public class Robot extends TimedRobot {
 
@@ -33,6 +37,10 @@ public class Robot extends TimedRobot {
     boolean takingSnapshot;
     double driveSpeed;
     double turnSpeed;
+    Gyro gyro;
+
+    public double previousAngle;
+    public double changeInAngle;
     
     @Override
     public void robotInit () {
@@ -60,6 +68,11 @@ public class Robot extends TimedRobot {
 
         driveSpeed = 0;
         turnSpeed = 0;
+
+        gyro = Gyro.getInstance();
+
+        previousAngle = 0;
+        changeInAngle = 0;
     }
 
     @Override
@@ -70,9 +83,9 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic () {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        // System.out.println("short " + table.getEntry("tshort").getDouble(0));
-        // System.out.println("long " + table.getEntry("tlong ").getDouble(0));
-        // System.out.println("ratio " + table.getEntry("tshort").getDouble(0)/table.getEntry("tlong ").getDouble(0));
+        
+        changeInAngle = gyro.getAngle() - previousAngle;
+        System.out.println(changeInAngle);
 
         driveSpeed = 0;
         turnSpeed = 0;
@@ -145,10 +158,12 @@ public class Robot extends TimedRobot {
             leftStickPressed = false;
         }
 
-        // if(turnSpeed != 0 || driveSpeed != 0){
-            DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
-        // }
         
+        DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
+        
+        previousAngle = gyro.getAngle();
+        gyro.zeroAngle();
+
     }
  
     public void addDistancePercent(NetworkTable table){

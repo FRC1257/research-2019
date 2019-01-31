@@ -8,25 +8,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision{
 
-     public static double angleCorrect(NetworkTable table){
+    public static double angleCorrect(NetworkTable table){
 
       NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
       double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
+      
+        if(Math.abs(Robot.changeInAngle) < 0.1){ //If the robot is relatively still
+            double min_command = 0.10; //Minimum motor input to move robot in case P can't do it 
+            double Kp = 0.03; // for PID (pcontrol)
+            double heading_error = tx; // How far from target
+            double steering_adjust = 0.0;
 
-      double min_command = 0.10; //Minimum motor input to move robot in case P can't do it 
-      double Kp = -0.03; // for PID (pcontrol)
-      double heading_error = tx; // How far from target
-      double steering_adjust = 0.0;
+            if (tx > 2.0){ // If tx > 1.0, do normal pid
+                steering_adjust = Kp * heading_error;
+            } 
+            else if (tx < 2.0) // If tx 1.0, the motor will not be able to move the robot due to friction, so min_command is added to give it the minimum speed to move
+            {
+                steering_adjust = Kp * heading_error + min_command;
+            }
+        }
+        else{ // If the robot is turning quickly or drifting
 
-      if (tx > 2.0){ // If tx > 1.0, do normal pid
-        steering_adjust = Kp * heading_error;
-      } 
-      else if (tx < 2.0) // If tx 1.0, the motor will not be able to move the robot due to friction, so min_command is added to give it the minimum speed to move
-      {
-        steering_adjust = Kp * heading_error + min_command;
-      }
-
-     return(-steering_adjust);
+        }   
+     return(steering_adjust);
     }
 
     public static double getInDistance(NetworkTable table){ 
