@@ -39,8 +39,8 @@ public class Robot extends TimedRobot {
     double turnSpeed;
     Gyro gyro;
 
-    public double previousAngle;
-    public double changeInAngle;
+    double previousAngle;
+    double changeInAngle;
     
     @Override
     public void robotInit () {
@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
                 table.getEntry("pipeline").setNumber(0);
             }
             
-            turnSpeed += Vision.angleCorrect(table);
+            turnSpeed += Vision.angleCorrect(table, changeInAngle);
         }
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) == 0){
             table.getEntry("pipeline").setNumber(0);
@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
 
         if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.5){
             // Vision.shoot(table, DriveTrain);
-            turnSpeed += Vision.angleCorrect(table);
+            turnSpeed += Vision.angleCorrect(table, changeInAngle);
             driveSpeed += Vision.getInDistance(table);
         }
         if(Controller.getXButton()){
