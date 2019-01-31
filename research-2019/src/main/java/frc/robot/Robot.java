@@ -161,6 +161,8 @@ public class Robot extends TimedRobot {
         for(int i = 0; i < DistanceToArea.size() - 1; i++){
             System.out.print(DistanceToArea.get(i) + ", ");
         }
-        System.out.println(DistanceToArea.get(DistanceToArea.size() - 1));
+        if(DistanceToArea.size() > 0){
+            System.out.println(DistanceToArea.get(DistanceToArea.size() - 1));
+        }
     }
 }
