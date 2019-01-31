@@ -6,10 +6,10 @@
    * *MIGHT NOT BE UP TO DATE, SO CHECK LIMELIGHT BRANCH*
  * limelight
    * vision can be found here
- * limelight-backup
-   * This is a backup of the old 2018 WPILib limelight vision code. It is kept for just in case the new code does not work for easy restoration.
  * easypath
    * easypath allows paths for autonomous to be made quickly and easily and then used by the robot
  * double-solenoid
    * double-solenoid has code to test whether double solenoids work properly.
+ * snail-vision
+   * snail-vision is supposed to be a structure for vision that we could reuse for future years with all functionality we might ever need without having to adjust anything but tuning.
 ##### If anyone has any questions or needs explaining, please contact Adam Zamlynny on slack or in real life
