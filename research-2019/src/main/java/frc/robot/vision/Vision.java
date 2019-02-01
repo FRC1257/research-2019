@@ -8,29 +8,41 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision{
 
-     public static double angleCorrect(NetworkTable table){
-
+    public static double angleCorrect(NetworkTable table, int significantChanges, double gyro){
+      NetworkTableEntry tvE = table.getEntry("tv");
       NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
       double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
+      double tv = tvE.getDouble(0);
+      double Kp;
+      double heading_error;
+      double steering_adjust = 0;
+        if(significantChanges < 0 && tv == 1){ //If the robot is relatively still
+            double min_command = 0.10; //Minimum motor input to move robot in case P can't do it 
+            Kp = -0.03; // for PID (pcontrol)
+            heading_error = tx; // How far from target
+            steering_adjust = 0.0;
 
-      double min_command = 0.10; //Minimum motor input to move robot in case P can't do it 
-      double Kp = -0.03; // for PID (pcontrol)
-      double heading_error = tx; // How far from target
-      double steering_adjust = 0.0;
-
-      if (tx > 2.0){ // If tx > 1.0, do normal pid
-        steering_adjust = Kp * heading_error;
-      } 
-      else if (tx < 2.0) // If tx 1.0, the motor will not be able to move the robot due to friction, so min_command is added to give it the minimum speed to move
-      {
-        steering_adjust = Kp * heading_error + min_command;
-      }
-
+            if (tx > 2.0){ // If tx > 1.0, do normal pid
+                steering_adjust = Kp * heading_error;
+            } 
+            else if (tx < 2.0) // If tx 1.0, the motor will not be able to move the robot due to friction, so min_command is added to give it the minimum speed to move
+            {
+                steering_adjust = Kp * heading_error + min_command;
+            }
+        }
+        else if (tv ==1){ // If the robot is turning quickly or drifting
+            if(gyro > 0){
+                steering_adjust = 2;
+            }
+            else{
+                steering_adjust = -2;
+            }
+        }   
      return(-steering_adjust);
     }
 
     public static double getInDistance(NetworkTable table){ 
-        double KpDistance = 0.04; // For p control
+        double KpDistance = 0.03; // For p control
         double currentDistance = tableDistanceFromObject(table); //cameraHeight and cameraAngle are constants
         double distanceError = currentDistance - Constants.desiredDistance;
         double driving_adjust = 0;
@@ -40,16 +52,16 @@ public class Vision{
         return(driving_adjust);
     }
 
-    public static void findObject(NetworkTable table, DifferentialDrive DriveTrain){ // Spins until the robot finds the target
-        NetworkTableEntry tvE = table.getEntry("tv");
-        double tv = tvE.getDouble(0);
-        if(tv == 0.0){ // No target on screen, then spin
-            DriveTrain.arcadeDrive(0, 1); 
-        }
-        else if(tv == 1.0){ // Target on screen, then aim on it
-            angleCorrect(table);
-        }
-    }
+    // public static void findObject(NetworkTable table, DifferentialDrive DriveTrain){ // Spins until the robot finds the target
+    //     NetworkTableEntry tvE = table.getEntry("tv");
+    //     double tv = tvE.getDouble(0);
+    //     if(tv == 0.0){ // No target on screen, then spin
+    //         DriveTrain.arcadeDrive(0, 1); 
+    //     }
+    //     else if(tv == 1.0){ // Target on screen, then aim on it
+    //         // angleCorrect(table,);
+    //     }
+    // }
 
    //trig method, not viable for 2019 since target is low 
     public static double distanceFromObject(NetworkTable table){ //d = (h2-h1) / tan(a1+a2)
@@ -92,11 +104,11 @@ public class Vision{
     }
 
     //Handles all vision firing and other stuff
-    public static void shoot(NetworkTable table, DifferentialDrive DriveTrain){ //Sample code that the robot fired the projectile
-        DriveTrain.arcadeDrive(getInDistance(table), angleCorrect(table)); // getInDistance and angleCorrect return values to correct the robot.
+    // public static void shoot(NetworkTable table, DifferentialDrive DriveTrain){ //Sample code that the robot fired the projectile
+        // DriveTrain.arcadeDrive(getInDistance(table), angleCorrect(table)); // getInDistance and angleCorrect return values to correct the robot.
         // table.getEntry("snapshot").set(1);
-        
-    }
+        // 
+    // }
 
     
 }

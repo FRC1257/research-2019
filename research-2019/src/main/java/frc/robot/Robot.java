@@ -9,6 +9,7 @@ package frc.robot;
 
 import frc.robot.vision.*;
 import frc.robot.constants.Constants;
+import frc.robot.util.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.*;
@@ -16,6 +17,9 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import java.util.ArrayList;
+import com.kauailabs.navx.frc.*;
+
+import edu.wpi.first.wpilibj.I2C.Port;
 
 public class Robot extends TimedRobot {
 
@@ -33,7 +37,12 @@ public class Robot extends TimedRobot {
     boolean takingSnapshot;
     double driveSpeed;
     double turnSpeed;
-    
+    Gyro gyro;
+
+    double previousAngle;
+    double changeInAngle;
+    int significantChanges;
+
     @Override
     public void robotInit () {
         
@@ -60,6 +69,12 @@ public class Robot extends TimedRobot {
 
         driveSpeed = 0;
         turnSpeed = 0;
+
+        gyro = Gyro.getInstance();
+
+        previousAngle = 0;
+        changeInAngle = 0;
+        significantChanges = 0;
     }
 
     @Override
@@ -70,13 +85,16 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic () {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        // System.out.println("short " + table.getEntry("tshort").getDouble(0));
-        // System.out.println("long " + table.getEntry("tlong ").getDouble(0));
-        // System.out.println("ratio " + table.getEntry("tshort").getDouble(0)/table.getEntry("tlong ").getDouble(0));
+        
+        changeInAngle = gyro.getAngle() - previousAngle;
+        significantChanges--;
+        if(Math.abs(changeInAngle) > 3){
+            significantChanges = 3;
+        }
 
         driveSpeed = 0;
         turnSpeed = 0;
-
+        
         // Basic Teleop Drive Code
         if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
@@ -102,23 +120,34 @@ public class Robot extends TimedRobot {
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0){ //If left trigger pressed and a target on screen then turn to it
             // DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
-            if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) < 0.99 ){
+            if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) < 0.9 ){
                 table.getEntry("pipeline").setNumber(1); 
             }
             else{
                 table.getEntry("pipeline").setNumber(0);
             }
             
-            turnSpeed += Vision.angleCorrect(table);
+            turnSpeed += Vision.angleCorrect(table, significantChanges, gyro.getAngle());
         }
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) == 0){
             table.getEntry("pipeline").setNumber(0);
         }
 
-        if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.5){
+        // if(Controller.getTriggerAxis(GenericHID.Hand.kRight) == 0){
+        //     table.getEntry("pipeline").setNumber(0);
+        // }
+
+        if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0){
             // Vision.shoot(table, DriveTrain);
-            turnSpeed += Vision.angleCorrect(table);
+            turnSpeed += Vision.angleCorrect(table, significantChanges, gyro.getAngle());
             driveSpeed += Vision.getInDistance(table);
+
+            // if(Controller.getTriggerAxis(GenericHID.Hand.kRight) < 0.99 ){
+            //     table.getEntry("pipeline").setNumber(1); 
+            // }
+            // else{
+            //     table.getEntry("pipeline").setNumber(0);
+            // }
         }
         if(Controller.getXButton()){
             // Vision.findObject(table, DriveTrain);
@@ -145,10 +174,12 @@ public class Robot extends TimedRobot {
             leftStickPressed = false;
         }
 
-        // if(turnSpeed != 0 || driveSpeed != 0){
-            DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
-        // }
         
+        DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
+        
+        previousAngle = gyro.getAngle();
+        gyro.zeroAngle();
+
     }
  
     public void addDistancePercent(NetworkTable table){
@@ -161,6 +192,8 @@ public class Robot extends TimedRobot {
         for(int i = 0; i < DistanceToArea.size() - 1; i++){
             System.out.print(DistanceToArea.get(i) + ", ");
         }
-        System.out.println(DistanceToArea.get(DistanceToArea.size() - 1));
+        if(DistanceToArea.size() > 0){
+            System.out.println(DistanceToArea.get(DistanceToArea.size() - 1));
+        }
     }
 }
