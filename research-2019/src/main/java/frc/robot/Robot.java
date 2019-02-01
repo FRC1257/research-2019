@@ -41,7 +41,8 @@ public class Robot extends TimedRobot {
 
     double previousAngle;
     double changeInAngle;
-    
+    int significantChanges;
+
     @Override
     public void robotInit () {
         
@@ -73,6 +74,7 @@ public class Robot extends TimedRobot {
 
         previousAngle = 0;
         changeInAngle = 0;
+        significantChanges = 0;
     }
 
     @Override
@@ -85,11 +87,14 @@ public class Robot extends TimedRobot {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
         
         changeInAngle = gyro.getAngle() - previousAngle;
-        System.out.println(changeInAngle);
+        significantChanges--;
+        if(Math.abs(changeInAngle) > 3){
+            significantChanges = 3;
+        }
 
         driveSpeed = 0;
         turnSpeed = 0;
-
+        
         // Basic Teleop Drive Code
         if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
@@ -115,29 +120,34 @@ public class Robot extends TimedRobot {
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0){ //If left trigger pressed and a target on screen then turn to it
             // DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
-            if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) < 0.99 ){
+            if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) < 0.9 ){
                 table.getEntry("pipeline").setNumber(1); 
             }
             else{
                 table.getEntry("pipeline").setNumber(0);
             }
             
-            turnSpeed += Vision.angleCorrect(table, changeInAngle);
+            turnSpeed += Vision.angleCorrect(table, significantChanges, gyro.getAngle());
         }
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) == 0){
             table.getEntry("pipeline").setNumber(0);
         }
 
+        // if(Controller.getTriggerAxis(GenericHID.Hand.kRight) == 0){
+        //     table.getEntry("pipeline").setNumber(0);
+        // }
+
         if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0){
             // Vision.shoot(table, DriveTrain);
-            if(Controller.getTriggerAxis(GenericHID.Hand.kRight) < 0.99 ){
-                table.getEntry("pipeline").setNumber(1); 
-            }
-            else{
-                table.getEntry("pipeline").setNumber(0);
-            }
-            turnSpeed += Vision.angleCorrect(table, changeInAngle);
+            turnSpeed += Vision.angleCorrect(table, significantChanges, gyro.getAngle());
             driveSpeed += Vision.getInDistance(table);
+
+            // if(Controller.getTriggerAxis(GenericHID.Hand.kRight) < 0.99 ){
+            //     table.getEntry("pipeline").setNumber(1); 
+            // }
+            // else{
+            //     table.getEntry("pipeline").setNumber(0);
+            // }
         }
         if(Controller.getXButton()){
             // Vision.findObject(table, DriveTrain);
