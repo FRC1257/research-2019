@@ -33,6 +33,9 @@ public class Robot extends TimedRobot {
     boolean takingSnapshot;
     double driveSpeed;
     double turnSpeed;
+    boolean pidActive;
+    double lastTime;
+    double setpoint;
     
     @Override
     public void robotInit () {
@@ -60,6 +63,13 @@ public class Robot extends TimedRobot {
 
         driveSpeed = 0;
         turnSpeed = 0;
+
+        pidActive = false;
+        lastTime = null;
+        setpoint = 90;
+
+        Gyro gyro = Gyro.getInstance();
+        SynchronousPIDF pid = new SynchronousPIDF(1, 0, 1);
 
     }
 
@@ -150,14 +160,30 @@ public class Robot extends TimedRobot {
             DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
         // }
 
-        //PID loop
-        boolean pidActive = false;
-        double lastTime = -1;
+        // PID loop
 
-        Gyro gyro = Gyro.getInstance();
-        
         if(Controller.getBButton()) {
-            
+
+            // Only runs the first time
+            if(!pidActive) {
+                gyro.resetAngle()
+                pid.reset();
+                pid.setConstants()
+                pid.setSetpoint(setpoint);
+                lastTime = Timer.getFPGATimestamp()
+
+                pidActive = true;
+            }
+            // Do the PID while the b button is first pressed
+            double motorSpeed = pid.calculate(getAngle(), Timer.getFPGATimestamp() - lastTime);
+            lastTime = Timer.getFPGATimestamp();
+            //
+            driveTrain.arcadeDrive(0, motorspeed);
+        }
+        else {
+        // End the PID
+            pidActive = false;
+        }
 
         }
 
