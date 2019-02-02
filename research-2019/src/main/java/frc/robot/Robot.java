@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
 
         driveSpeed = 0;
         turnSpeed = 0;
+
     }
 
     @Override
@@ -148,6 +149,14 @@ public class Robot extends TimedRobot {
         // if(turnSpeed != 0 || driveSpeed != 0){
             DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
         // }
+
+        //PID loop
+        boolean pidActive = false;
+        double lastTime = -1;
+
+
+        
+        if(Controller.getBButton());
         
     }
  
