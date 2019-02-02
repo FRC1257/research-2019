@@ -154,9 +154,13 @@ public class Robot extends TimedRobot {
         boolean pidActive = false;
         double lastTime = -1;
 
-
+        Gyro gyro = Gyro.getInstance();
         
-        if(Controller.getBButton());
+        if(Controller.getBButton()) {
+            
+
+        }
+
         
     }
  
