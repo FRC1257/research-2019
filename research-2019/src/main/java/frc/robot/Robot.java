@@ -9,6 +9,7 @@ package frc.robot;
 
 import frc.robot.vision.*;
 import frc.robot.constants.Constants;
+import frc.robot.util;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.*;
@@ -33,9 +34,9 @@ public class Robot extends TimedRobot {
     boolean takingSnapshot;
     double driveSpeed;
     double turnSpeed;
+    
     boolean pidActive;
     double lastTime;
-    double setpoint;
     
     @Override
     public void robotInit () {
@@ -66,10 +67,9 @@ public class Robot extends TimedRobot {
 
         pidActive = false;
         lastTime = null;
-        setpoint = 90;
-
+        
         Gyro gyro = Gyro.getInstance();
-        SynchronousPIDF pid = new SynchronousPIDF(1, 0, 1);
+        SynchronousPIDF pid = new SynchronousPIDF(Constants.TURN_PIDF[0], (Constants.TURN_PIDF[1], (Constants.TURN_PIDF[2], (Constants.TURN_PIDF[3]);
 
     }
 
@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
             turnSpeed += Vision.angleCorrect(table);
             driveSpeed += Vision.getInDistance(table);
         }
-        if(Controller.getXButton()){
+        // if(Controller.getXButton()){
             // Vision.findObject(table, DriveTrain);
         }
         if(Controller.getYButton()){
@@ -158,32 +158,34 @@ public class Robot extends TimedRobot {
 
         // if(turnSpeed != 0 || driveSpeed != 0){
             DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
-        // }
+        // }      
 
         // PID loop
-
-        if(Controller.getBButton()) {
+        if(Controller.getXButton()) {
 
             // Only runs the first time
             if(!pidActive) {
-                gyro.resetAngle()
+                gyro.resetAngle();
                 pid.reset();
-                pid.setConstants()
-                pid.setSetpoint(setpoint);
-                lastTime = Timer.getFPGATimestamp()
+        
+                pid.setSetpoint(Constants.setpoint);
+                lastTime = Timer.getFPGATimestamp();
 
                 pidActive = true;
             }
             // Do the PID while the b button is first pressed
             double motorSpeed = pid.calculate(getAngle(), Timer.getFPGATimestamp() - lastTime);
             lastTime = Timer.getFPGATimestamp();
-            //
-            driveTrain.arcadeDrive(0, motorspeed);
+            
+            DriveTrain.arcadeDrive(0, motorspeed);
         }
         else {
         // End the PID
             pidActive = false;
         }
+
+        gyro.displayValues();
+        gyro.updateValues();
 
         }
 

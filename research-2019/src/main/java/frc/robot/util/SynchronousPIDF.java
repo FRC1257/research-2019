@@ -1,7 +1,7 @@
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
 /*
-@author SuperMario210, from Team254
+@author Team254
 */
 
 /**
