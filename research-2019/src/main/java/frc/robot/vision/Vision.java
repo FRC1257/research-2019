@@ -8,15 +8,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision{
 
-    public static double angleCorrect(NetworkTable table, int significantChanges, double gyro){
-      NetworkTableEntry tvE = table.getEntry("tv");
-      NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
-      double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
-      double tv = tvE.getDouble(0);
-      double Kp;
-      double heading_error;
-      double steering_adjust = 0;
-        if(significantChanges < 0 && tv == 1){ //If the robot is relatively still
+    public static double angleCorrect(NetworkTable table){
+        NetworkTableEntry tvE = table.getEntry("tv");
+        NetworkTableEntry txE = table.getEntry("tx"); // Angle of the target away from the target -26 to 26 degrees
+        double tx = txE.getDouble(0); //Gets the angle of how far away from the crosshair the object is
+        double tv = tvE.getDouble(0);
+        double Kp;
+        double heading_error;
+        double steering_adjust = 0;
+        if(tv == 1){ //If the target is onscreen
             double min_command = 0.10; //Minimum motor input to move robot in case P can't do it 
             Kp = -0.03; // for PID (pcontrol)
             heading_error = tx; // How far from target
@@ -30,15 +30,7 @@ public class Vision{
                 steering_adjust = Kp * heading_error + min_command;
             }
         }
-        else if (tv ==1){ // If the robot is turning quickly or drifting
-            if(gyro > 0){
-                steering_adjust = 2;
-            }
-            else{
-                steering_adjust = -2;
-            }
-        }   
-     return(-steering_adjust);
+        return(-steering_adjust);
     }
 
     public static double getInDistance(NetworkTable table){ 

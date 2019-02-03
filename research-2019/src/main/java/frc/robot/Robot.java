@@ -37,12 +37,7 @@ public class Robot extends TimedRobot {
     boolean takingSnapshot;
     double driveSpeed;
     double turnSpeed;
-    Gyro gyro;
-
-    double previousAngle;
-    double changeInAngle;
-    int significantChanges;
-
+    
     @Override
     public void robotInit () {
         
@@ -69,12 +64,6 @@ public class Robot extends TimedRobot {
 
         driveSpeed = 0;
         turnSpeed = 0;
-
-        gyro = Gyro.getInstance();
-
-        previousAngle = 0;
-        changeInAngle = 0;
-        significantChanges = 0;
     }
 
     @Override
@@ -85,12 +74,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic () {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        
-        changeInAngle = gyro.getAngle() - previousAngle;
-        significantChanges--;
-        if(Math.abs(changeInAngle) > 3){
-            significantChanges = 3;
-        }
 
         driveSpeed = 0;
         turnSpeed = 0;
