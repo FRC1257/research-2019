@@ -40,7 +40,7 @@ public class Gyro {
     /**
      * Sets the current yaw angle to "0".
      */
-    public void zeroAngle() {
+    public void resetAngle() {
         navx.zeroYaw();
     }
 
@@ -51,44 +51,4 @@ public class Gyro {
     public double getAngle() {
         return navx.getYaw();
     }
-
-    /**
-     * Resets the Gyro.
-     */
-    public void resetAngle() {
-        navx.reset();
-    }
-
-
-    // Put in key & default value
-    public void displayValues() {
-        SmartDashboard.putNumber(angle, navx.getYaw());
-        SmartDashboard.putNumber("Setpoint: ", Constants.setpoint);
-        SmartDashboard.putNumber("Turn P: ", Constants.TURN_PIDF[0]);
-        SmartDashboard.putNumber("Turn I: ", Constants.TURN_PIDF[1]);
-        SmartDashboard.putNumber("Turn D: ", Constants.TURN_PIDF[2]);
-        SmartDashboard.putNumber("Turn F: ", Constants.TURN_PIDF[3]);
-    
-    }
-
-    // Update constants from Smart Dashboard
-    public void updateValues() {
-        if(Constants.setpoint != SmartDashboard.getNumber("Setpoint: ", Constants.setpoint)) {
-            Constants.setpoint = SmartDashboard.getNumber("Setpoint: ", Constants.setpoint);
-        }
-        if(Constants.TURN_PIDF[0] != SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0])) {
-            Constants.TURN_PIDF[0] = SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0]);
-        }
-    
-        if(Constants.TURN_PIDF[1] != SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1])) {
-            Constants.TURN_PIDF[1] = SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1]);   
-        }
-
-        if(Constants.TURN_PIDF[2] != SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2])) {
-            Constants.TURN_PIDF[2] = SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2]);   
-        }
-
-        if(Constants.TURN_PIDF[3] != SmartDashboard.getNumber("Turn F", Constants.TURN_PIDF[3])) {
-            Constants.TURN_PIDF[3] = SmartDashboard.getNumber("Turn F", Constants.TURN_PIDF[3]);   
-        }
 }

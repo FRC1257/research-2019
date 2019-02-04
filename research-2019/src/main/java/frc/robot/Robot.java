@@ -9,7 +9,7 @@ package frc.robot;
 
 import frc.robot.vision.*;
 import frc.robot.constants.Constants;
-import frc.robot.util;
+import frc.robot.util.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.*;
@@ -37,6 +37,9 @@ public class Robot extends TimedRobot {
     
     boolean pidActive;
     double lastTime;
+
+    Gyro gyro;
+    SynchronousPIDF pid;
     
     @Override
     public void robotInit () {
@@ -66,16 +69,19 @@ public class Robot extends TimedRobot {
         turnSpeed = 0;
 
         pidActive = false;
-        lastTime = null;
+        lastTime = -1;
         
-        Gyro gyro = Gyro.getInstance();
-        SynchronousPIDF pid = new SynchronousPIDF(Constants.TURN_PIDF[0], (Constants.TURN_PIDF[1], (Constants.TURN_PIDF[2], (Constants.TURN_PIDF[3]);
+        gyro = Gyro.getInstance();
+        pid = new SynchronousPIDF(Constants.TURN_PIDF[0], Constants.TURN_PIDF[1], Constants.TURN_PIDF[2], Constants.TURN_PIDF[3]);
 
+        setConstantTuning();
+
+        CameraServer.getInstance().startAutomaticCapture();
     }
 
     @Override
     public void teleopInit () {
-
+        gyro.resetAngle();
     }
 
     @Override
@@ -133,7 +139,7 @@ public class Robot extends TimedRobot {
         }
         // if(Controller.getXButton()){
             // Vision.findObject(table, DriveTrain);
-        }
+        // }
         if(Controller.getYButton()){
             Vision.findCameraAngle(table, 120);
         }
@@ -168,29 +174,60 @@ public class Robot extends TimedRobot {
                 gyro.resetAngle();
                 pid.reset();
         
-                pid.setSetpoint(Constants.setpoint);
+                pid.setSetpoint(90);
                 lastTime = Timer.getFPGATimestamp();
 
                 pidActive = true;
             }
-            // Do the PID while the b button is first pressed
-            double motorSpeed = pid.calculate(getAngle(), Timer.getFPGATimestamp() - lastTime);
+            // Do the PID while the x button is first pressed
+            double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
             lastTime = Timer.getFPGATimestamp();
             
-            DriveTrain.arcadeDrive(0, motorspeed);
+            DriveTrain.arcadeDrive(0, motorSpeed);
         }
         else {
         // End the PID
             pidActive = false;
         }
 
-        gyro.displayValues();
-        gyro.updateValues();
+        displayValues();
+        updateConstantTuning();
 
+    }
+
+    public void setConstantTuning() {
+        SmartDashboard.putNumber("Turn P", Constants.TURN_PIDF[0]);
+        SmartDashboard.putNumber("Turn I", Constants.TURN_PIDF[1]);
+        SmartDashboard.putNumber("Turn D", Constants.TURN_PIDF[2]);
+        SmartDashboard.putNumber("Turn F", Constants.TURN_PIDF[3]);
+    }
+
+    // Put in key & default value
+    public void displayValues() {
+        SmartDashboard.putNumber("Angle", gyro.getAngle());
+    }
+
+    // Update constants from Smart Dashboard
+    public void updateConstantTuning() {
+        if(Constants.TURN_PIDF[0] != SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0])) {
+            Constants.TURN_PIDF[0] = SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0]);
+        }
+    
+        if(Constants.TURN_PIDF[1] != SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1])) {
+            Constants.TURN_PIDF[1] = SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1]);   
         }
 
-        
+        if(Constants.TURN_PIDF[2] != SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2])) {
+            Constants.TURN_PIDF[2] = SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2]);   
+        }
+
+        if(Constants.TURN_PIDF[3] != SmartDashboard.getNumber("Turn F", Constants.TURN_PIDF[3])) {
+            Constants.TURN_PIDF[3] = SmartDashboard.getNumber("Turn F", Constants.TURN_PIDF[3]);   
+        }
+
+        pid.setPID(Constants.TURN_PIDF[0], Constants.TURN_PIDF[1], Constants.TURN_PIDF[2], Constants.TURN_PIDF[3]);
     }
+    
  
     public void addDistancePercent(NetworkTable table){
         NetworkTableEntry taE = table.getEntry("ta");
