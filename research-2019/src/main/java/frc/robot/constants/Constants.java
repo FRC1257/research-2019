@@ -13,5 +13,5 @@ public class Constants{ // ALL IN INCHES
 
     public static final double desiredDistance = 22;
 
-    public static double[] TURN_PIDF = {0.0130, 0.0075, 0.003, 0.0};
+    public static double[] TURN_PIDF = {0.030, 0.0075, 0.0054, 0.0};
 }

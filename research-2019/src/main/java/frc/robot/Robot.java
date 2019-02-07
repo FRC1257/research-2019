@@ -209,15 +209,15 @@ public class Robot extends TimedRobot {
 
     // Update constants from Smart Dashboard
     public void updateConstantTuning() {
-        if(Constants.TURN_PIDF[0] != SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0])) {
+        if(Constants.TURN_PIDF[0] != SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0])) { //0.025
             Constants.TURN_PIDF[0] = SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0]);
         }
     
-        if(Constants.TURN_PIDF[1] != SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1])) {
+        if(Constants.TURN_PIDF[1] != SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1])) { //0.02
             Constants.TURN_PIDF[1] = SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1]);   
         }
 
-        if(Constants.TURN_PIDF[2] != SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2])) {
+        if(Constants.TURN_PIDF[2] != SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2])) { //0.0025
             Constants.TURN_PIDF[2] = SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2]);   
         }
 
