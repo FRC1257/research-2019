@@ -149,6 +149,7 @@ public class Robot extends TimedRobot {
         //     // DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
         //     driveSpeed += Vision.getInDistance(table);
         // }
+        
         if(Controller.getStickButtonPressed(GenericHID.Hand.kRight) && rightStickPressed == false){
             addDistancePercent(table);
             rightStickPressed = true;
@@ -199,7 +200,7 @@ public class Robot extends TimedRobot {
 
                 pidActive = true;
             }
-            // Do the PID while the x button is first pressed
+            
             double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
             lastTime = Timer.getFPGATimestamp();
             
@@ -218,7 +219,7 @@ public class Robot extends TimedRobot {
 
                 pidActive = true;
             }
-            // Do the PID while the x button is first pressed
+           
             double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
             lastTime = Timer.getFPGATimestamp();
             
