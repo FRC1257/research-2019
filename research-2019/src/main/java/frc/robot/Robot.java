@@ -140,13 +140,15 @@ public class Robot extends TimedRobot {
         // if(Controller.getXButton()){
             // Vision.findObject(table, DriveTrain);
         // }
-        if(Controller.getYButton()){
-            Vision.findCameraAngle(table, 120);
-        }
-        if(Controller.getBButton()){
-            // DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
-            driveSpeed += Vision.getInDistance(table);
-        }
+
+        // if(Controller.getYButton()){
+        //     Vision.findCameraAngle(table, 120);
+        // }
+
+        // if(Controller.getBButton()){
+        //     // DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
+        //     driveSpeed += Vision.getInDistance(table);
+        // }
         if(Controller.getStickButtonPressed(GenericHID.Hand.kRight) && rightStickPressed == false){
             addDistancePercent(table);
             rightStickPressed = true;
@@ -166,7 +168,7 @@ public class Robot extends TimedRobot {
             DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
         // }      
 
-        // PID loop
+        // PID loop 90 degrees 
         if(Controller.getXButton()) {
 
             // Only runs the first time
@@ -185,6 +187,43 @@ public class Robot extends TimedRobot {
             
             DriveTrain.arcadeDrive(0, motorSpeed);
         }
+        // PID loop -90 degrees 
+        else if(Controller.getYButton()) {
+            // Only runs the first time
+            if(!pidActive) {
+                gyro.resetAngle();
+                pid.reset();
+        
+                pid.setSetpoint(-90);
+                lastTime = Timer.getFPGATimestamp();
+
+                pidActive = true;
+            }
+            // Do the PID while the x button is first pressed
+            double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
+            lastTime = Timer.getFPGATimestamp();
+            
+            DriveTrain.arcadeDrive(0, motorSpeed);
+        }
+        // PID loop 180 degrees 
+        else if(Controller.getBButton()) {
+
+            // Only runs the first time
+            if(!pidActive) {
+                gyro.resetAngle();
+                pid.reset();
+        
+                pid.setSetpoint(180);
+                lastTime = Timer.getFPGATimestamp();
+
+                pidActive = true;
+            }
+            // Do the PID while the x button is first pressed
+            double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
+            lastTime = Timer.getFPGATimestamp();
+            
+            DriveTrain.arcadeDrive(0, motorSpeed);
+        }
         else {
         // End the PID
             pidActive = false;
@@ -193,6 +232,8 @@ public class Robot extends TimedRobot {
         displayValues();
         updateConstantTuning();
 
+        
+
     }
 
     public void setConstantTuning() {
@@ -200,6 +241,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Turn I", Constants.TURN_PIDF[1]);
         SmartDashboard.putNumber("Turn D", Constants.TURN_PIDF[2]);
         SmartDashboard.putNumber("Turn F", Constants.TURN_PIDF[3]);
+    
     }
 
     // Put in key & default value
@@ -209,15 +251,15 @@ public class Robot extends TimedRobot {
 
     // Update constants from Smart Dashboard
     public void updateConstantTuning() {
-        if(Constants.TURN_PIDF[0] != SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0])) { //0.025
+        if(Constants.TURN_PIDF[0] != SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0])) { 
             Constants.TURN_PIDF[0] = SmartDashboard.getNumber("Turn P", Constants.TURN_PIDF[0]);
         }
     
-        if(Constants.TURN_PIDF[1] != SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1])) { //0.02
+        if(Constants.TURN_PIDF[1] != SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1])) { 
             Constants.TURN_PIDF[1] = SmartDashboard.getNumber("Turn I", Constants.TURN_PIDF[1]);   
         }
 
-        if(Constants.TURN_PIDF[2] != SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2])) { //0.0025
+        if(Constants.TURN_PIDF[2] != SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2])) { 
             Constants.TURN_PIDF[2] = SmartDashboard.getNumber("Turn D", Constants.TURN_PIDF[2]);   
         }
 
