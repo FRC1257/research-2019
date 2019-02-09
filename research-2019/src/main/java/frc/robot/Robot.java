@@ -9,6 +9,7 @@ package frc.robot;
 
 import frc.robot.vision.*;
 import frc.robot.constants.Constants;
+import frc.robot.util.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.*;
@@ -16,6 +17,9 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import java.util.ArrayList;
+import com.kauailabs.navx.frc.*;
+
+import edu.wpi.first.wpilibj.I2C.Port;
 
 public class Robot extends TimedRobot {
 
@@ -30,7 +34,15 @@ public class Robot extends TimedRobot {
     ArrayList<Double> DistanceToArea;
     Boolean leftStickPressed;
     Boolean rightStickPressed;
-    
+    boolean takingSnapshot;
+    double driveSpeed;
+    double turnSpeed;
+    Gyro gyro;
+
+    double previousAngle;
+    double changeInAngle;
+    int significantChanges;
+
     @Override
     public void robotInit () {
         
@@ -53,6 +65,16 @@ public class Robot extends TimedRobot {
 
         leftStickPressed = false;
         rightStickPressed = false;
+        takingSnapshot = false;
+
+        driveSpeed = 0;
+        turnSpeed = 0;
+
+        gyro = Gyro.getInstance();
+
+        previousAngle = 0;
+        changeInAngle = 0;
+        significantChanges = 0;
     }
 
     @Override
@@ -63,28 +85,69 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic () {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+        
+        changeInAngle = gyro.getAngle() - previousAngle;
+        significantChanges--;
+        if(Math.abs(changeInAngle) > 3){
+            significantChanges = 3;
+        }
 
+        driveSpeed = 0;
+        turnSpeed = 0;
+        
         // Basic Teleop Drive Code
         if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(-y, x);
+            // DriveTrain.arcadeDrive(-y, x);
+            driveSpeed = -y;
+            turnSpeed = x;
         } else if(Controller.getBumper(GenericHID.Hand.kLeft)) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
             double x = Controller.getX(GenericHID.Hand.kRight);
-            DriveTrain.arcadeDrive(-y, x);
+            // DriveTrain.arcadeDrive(-y, x);
+            driveSpeed = -y;
+            turnSpeed = x;
         } else if(Controller.getBumper(GenericHID.Hand.kRight)) {
-            double y = Controller.getX(GenericHID.Hand.kRight);
-            double x = Controller.getY(GenericHID.Hand.kLeft);
-            DriveTrain.arcadeDrive(-y, x);
+            double x = Controller.getX(GenericHID.Hand.kLeft);
+            double y = Controller.getY(GenericHID.Hand.kRight);
+            // DriveTrain.arcadeDrive(-y, x);
+            driveSpeed = -y;
+            turnSpeed = x;
+        }
+        if(Controller.getYButton()){ table.getEntry("pipeline").setNumber(0);
+        }
+        // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
+        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0){ //If left trigger pressed and a target on screen then turn to it
+            // DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
+            if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) < 0.9 ){
+                table.getEntry("pipeline").setNumber(1); 
+            }
+            else{
+                table.getEntry("pipeline").setNumber(0);
+            }
+            
+            turnSpeed += Vision.angleCorrect(table, significantChanges, gyro.getAngle());
+        }
+        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) == 0){
+            table.getEntry("pipeline").setNumber(0);
         }
 
-        // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
-        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5){ //If left trigger pressed and a target on screen then turn to it
-            DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
-        }
-        if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.5){
-            Vision.shoot(table, DriveTrain);
+        // if(Controller.getTriggerAxis(GenericHID.Hand.kRight) == 0){
+        //     table.getEntry("pipeline").setNumber(0);
+        // }
+
+        if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0){
+            // Vision.shoot(table, DriveTrain);
+            turnSpeed += Vision.angleCorrect(table, significantChanges, gyro.getAngle());
+            driveSpeed += Vision.getInDistance(table);
+
+            // if(Controller.getTriggerAxis(GenericHID.Hand.kRight) < 0.99 ){
+            //     table.getEntry("pipeline").setNumber(1); 
+            // }
+            // else{
+            //     table.getEntry("pipeline").setNumber(0);
+            // }
         }
         if(Controller.getXButton()){
             // Vision.findObject(table, DriveTrain);
@@ -93,7 +156,8 @@ public class Robot extends TimedRobot {
             Vision.findCameraAngle(table, 120);
         }
         if(Controller.getBButton()){
-            DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
+            // DriveTrain.arcadeDrive(Vision.getInDistance(table), 0);
+            driveSpeed += Vision.getInDistance(table);
         }
         if(Controller.getStickButtonPressed(GenericHID.Hand.kRight) && rightStickPressed == false){
             addDistancePercent(table);
@@ -110,18 +174,26 @@ public class Robot extends TimedRobot {
             leftStickPressed = false;
         }
 
+        
+        DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
+        
+        previousAngle = gyro.getAngle();
+        gyro.zeroAngle();
+
     }
  
-    
     public void addDistancePercent(NetworkTable table){
         NetworkTableEntry taE = table.getEntry("ta");
         DistanceToArea.add(taE.getDouble(0));
+        System.out.println(DistanceToArea.size());
     }	    
 
     public void printDistancePercent(){
         for(int i = 0; i < DistanceToArea.size() - 1; i++){
             System.out.print(DistanceToArea.get(i) + ", ");
         }
-        System.out.println(DistanceToArea.get(DistanceToArea.size() - 1));
+        if(DistanceToArea.size() > 0){
+            System.out.println(DistanceToArea.get(DistanceToArea.size() - 1));
+        }
     }
 }
