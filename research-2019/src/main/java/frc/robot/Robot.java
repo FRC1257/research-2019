@@ -166,7 +166,7 @@ public class Robot extends TimedRobot {
         }
 
         // if(turnSpeed != 0 || driveSpeed != 0){
-            DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
+            
         // }      
 
         // PID loop 90 degrees 
@@ -183,10 +183,10 @@ public class Robot extends TimedRobot {
                 pidActive = true;
             }
             // Do the PID while the x button is first pressed
-            double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
+             turnSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
             lastTime = Timer.getFPGATimestamp();
             
-            DriveTrain.arcadeDrive(0, motorSpeed);
+            // DriveTrain.arcadeDrive(0, motorSpeed);
         }
         // PID loop -90 degrees 
         else if(Controller.getYButton()) {
@@ -201,10 +201,10 @@ public class Robot extends TimedRobot {
                 pidActive = true;
             }
             
-            double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
+             turnSpeed += pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
             lastTime = Timer.getFPGATimestamp();
             
-            DriveTrain.arcadeDrive(0, motorSpeed);
+            // DriveTrain.arcadeDrive(0, motorSpeed);
         }
         // PID loop 180 degrees 
         else if(Controller.getBButton()) {
@@ -220,10 +220,10 @@ public class Robot extends TimedRobot {
                 pidActive = true;
             }
            
-            double motorSpeed = pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
+            turnSpeed += pid.calculate(gyro.getAngle(), Timer.getFPGATimestamp() - lastTime);
             lastTime = Timer.getFPGATimestamp();
             
-            DriveTrain.arcadeDrive(0, motorSpeed);
+            // DriveTrain.arcadeDrive(0, motorSpeed);
         }
         else {
         // End the PID
@@ -232,9 +232,8 @@ public class Robot extends TimedRobot {
 
         displayValues();
         updateConstantTuning();
-
         
-
+        DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
     }
 
     public void setConstantTuning() {
