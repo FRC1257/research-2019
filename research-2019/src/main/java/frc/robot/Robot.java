@@ -16,9 +16,6 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import java.util.ArrayList;
-import com.kauailabs.navx.frc.*;
-
-import edu.wpi.first.wpilibj.I2C.Port;
 
 public class Robot extends TimedRobot {
 
@@ -52,9 +49,6 @@ public class Robot extends TimedRobot {
         Controller = new XboxController(0);
 
         DistanceToArea = new ArrayList<Double>();
-
-        SmartDashboard.putNumber("kP", -0.3);
-        SmartDashboard.putNumber("min_command", 0.05); 
 
         leftStickPressed = false;
         rightStickPressed = false;
@@ -97,20 +91,20 @@ public class Robot extends TimedRobot {
 
         // Limelight vision code  temp ==&& tvE.getDouble(0) == 1
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0){ //If left trigger pressed and a target on screen then turn to it
-            // DriveTrain.arcadeDrive(0, Vision.angleCorrect(table));
+
             if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) < 0.9 ){
-                table.getEntry("pipeline").setNumber(1); 
+                table.getEntry("pipeline").setNumber(1); // Switch to single target vision when button first pressed
             }
             else{
-                table.getEntry("pipeline").setNumber(0);
+                table.getEntry("pipeline").setNumber(0); // Switch to dual target vision when button fully pressed
             }
             
             turnSpeed += Vision.angleCorrect(table);
         }
-        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) == 0){
+
+        if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) == 0){ // default pipeline uses dual target vision
             table.getEntry("pipeline").setNumber(0);
         }
-
 
         if(Controller.getTriggerAxis(GenericHID.Hand.kRight) > 0){
             turnSpeed += Vision.angleCorrect(table);
@@ -132,9 +126,7 @@ public class Robot extends TimedRobot {
             leftStickPressed = false;
         }
 
-        
         DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
-        
     }
  
     public void addDistancePercent(NetworkTable table){
