@@ -9,5 +9,13 @@
    * easypath allows paths for autonomous to be made quickly and easily and then used by the robot
  * double-solenoid
    * double-solenoid has code to test whether double solenoids work properly.
+ * navx
+   * navx includes code using a gyro and PID to turn autonomously.
+   
+## Backup Branches
+Keep these just in case
+* master
+* snail-vision-backup
+  * old code that was written at some point but commented out of the limelight branch and moved here
  
 ##### If anyone has any questions or needs explaining, please contact Adam Zamlynny on slack or in real life
