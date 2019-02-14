@@ -43,10 +43,10 @@ public class SnailVision {
         currentPipeline = new ArrayList<Double>(); // Array because it might be used when switching pipeline
     }
 
-    public static void limelightFunctionality(){
-        NetworkTable Table = NetworkTableInstance.getDefault().getTable("limelight");
+    public static void networkTableFunctionality(NetworkTable Table){ // Works with limelight!
+        // NetworkTable Table = NetworkTableInstance.getDefault().getTable("limelight");
         
-        // Creates objects which retrieve data from the limelight
+        // Creates objects which retrieve data from the limelight. The limelight MUST have these entries. Fill with 0 if they do not exist
         NetworkTableEntry txE = Table.getEntry("tx");
         NetworkTableEntry tyE = Table.getEntry("ty");
         NetworkTableEntry taE = Table.getEntry("ta");
@@ -86,28 +86,28 @@ public class SnailVision {
         }
     }
 
-    public static double angleCorrect(NetworkTable Table){
+    public double angleCorrect(){
         
 
         return(0); // temp
     }
 
-    public static double getInDistance(NetworkTable Table, Target Target){
+    public double getInDistance(Target Target){
 
         return(0); // temp
     }
     
-    public static double areaDistance(NetworkTable Table, Target Target){
+    public double areaDistance(Target Target){
 
         return(0); // temp
     }
 
-    public static double trigDistance(NetworkTable Table, Target Target){
+    public double trigDistance(Target Target){
 
         return(0); // temp
     }
 
-    public static double findTarget(NetworkTable Table){
+    public double findTarget(){
 
         return(0); // temp
     }
@@ -119,7 +119,9 @@ public class SnailVision {
         Table.getEntry("pipeline").setNumber(pipeline);
     }
 
-    public static void toggleScreenshot(NetworkTable Table){ // Takes 2 screenshots per second
+    // Limelight ONLY functions
+
+    public static void toggleLimelightScreenshot(NetworkTable Table){ // Takes 2 screenshots per second
         if(Table.getEntry("snapshot").getDouble(0) == 0){ // If the camera is not taking screenshots currently
             Table.getEntry("snapshot").setNumber(1);
         }
