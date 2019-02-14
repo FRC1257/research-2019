@@ -20,7 +20,7 @@ public class SnailVision {
     static ArrayList<Double> TargetA; // Target's area on the screen
     static ArrayList<Double> TargetV; // Target's Visibility on the screen 1.0 = true 0.0 = false
     static ArrayList<Double> TargetS; // Target's skew/rotation on the screen
-    static  ArrayList<Double> Latency; // Latency of the camera in miliseconds
+    static ArrayList<Double> Latency; // Latency of the camera in miliseconds
     static ArrayList<Double> TargetShort; // Sidelength of shortest side of the fitted bounding box (pixels)
     static ArrayList<Double> TargetLong; // Sidelength of longest side of the fitted bounding box (pixels)
     static ArrayList<Double> TargetHorizontal; // Horizontal length of the fitted bounding box
@@ -105,7 +105,7 @@ public class SnailVision {
         return(-steering_adjust); // return motor output
     }
 
-    public double getInDistance(Target Target){
+    public double getInDistance(Target Target){ 
 
         return(0); // temp
     }
@@ -118,6 +118,13 @@ public class SnailVision {
     public double trigDistance(Target Target){
 
         return(0); // temp
+    }
+
+    public double findCameraAngle(double currentDistance, Target Target){ // Give the distance from a known target in inches
+        // Camera Angle = arctan((Target Height - Camera Height) / Distance from Target) - Angle of Target Above Camera's Crosshair
+        double cameraAngle = Math.atan(Math.toRadians( ( (Target.TARGET_HEIGHT[0] - CAMERA_HEIGHT) / currentDistance) - TargetY.get(0)));
+        System.out.println("Camera Angle" + cameraAngle);
+        return(cameraAngle);
     }
 
     public double findTarget(){
