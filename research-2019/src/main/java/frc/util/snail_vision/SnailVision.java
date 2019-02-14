@@ -16,6 +16,8 @@ public class SnailVision {
     static double CAMERA_HEIGHT;
     static double CAMERA_ANGLE;
 
+    static double horizontalAngleFromTarget; // -180 to 0 to 180 degrees. Represents the last location the target was seen.
+
     static ArrayList<Double> TargetX; // Target's angle on the x-axis 
     static ArrayList<Double> TargetY; // Target's angle on the y-axis 
     static ArrayList<Double> TargetA; // Target's area on the screen
@@ -125,7 +127,7 @@ public class SnailVision {
                     minIndex = i; 
                 }
             }
-            
+
             // Finds the average of the area between the two recorded constant points to find the average inch measurement in between
             if(ta > Target.AREA_TO_DISTANCE[minIndex]){
                 minIndex += (ta - Target.AREA_TO_DISTANCE[minIndex]) / (Target.AREA_TO_DISTANCE[minIndex + 1] - Target.AREA_TO_DISTANCE[minIndex]);
@@ -155,8 +157,25 @@ public class SnailVision {
     }
 
     public double findTarget(){
+        double tv = TargetV.get(0);
 
-        return(0); // temp
+        if(tv == 0.0){ // If the target is not on the screen then spin towards it
+            if(horizontalAngleFromTarget < 0){
+                return(-0.5);
+            }
+            else if(horizontalAngleFromTarget > 0){
+                return(0.5);
+            }
+        }
+        else if (tv == 1.0){ // If the target is on the screen then auto-aim towards it
+            return(angleCorrect()); // temp
+        }
+
+        return(0);
+    }
+
+    public void trackTargetPosition(){
+
     }
 
     public static void changePipeline(NetworkTable Table, int pipeline){
