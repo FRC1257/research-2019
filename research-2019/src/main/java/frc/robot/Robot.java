@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import frc.util.*;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;

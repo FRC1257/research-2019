@@ -5,29 +5,29 @@ import edu.wpi.first.networktables.*;
 import java.util.*;
 
 public class SnailVision {
-    double ANGLE_CORRECT_P;
-    double ANGLE_CORRECT_F;
-    double ANGLE_CORRECT_MIN_ANGLE;
+    static double ANGLE_CORRECT_P;
+    static double ANGLE_CORRECT_F;
+    static double ANGLE_CORRECT_MIN_ANGLE;
 
-    double GET_IN_DISTANCE_P;
-    double GET_IN_DISTANCE_ERROR;
+    static double GET_IN_DISTANCE_P;
+    static double GET_IN_DISTANCE_ERROR;
 
-    double CAMERA_HEIGHT;
-    double CAMERA_ANGLE;
+    static double CAMERA_HEIGHT;
+    static double CAMERA_ANGLE;
 
-    ArrayList<Double> TargetX; // Target's angle on the x-axis 
-    ArrayList<Double> TargetY; // Target's angle on the y-axis 
-    ArrayList<Double> TargetA; // Target's area on the screen
-    ArrayList<Double> TargetV; // Target's Visibility on the screen 1.0 = true 0.0 = false
-    ArrayList<Double> TargetS; // Target's skew/rotation on the screen
-    ArrayList<Double> Latency; // Latency of the camera in miliseconds
-    ArrayList<Double> TargetShort; // Sidelength of shortest side of the fitted bounding box (pixels)
-    ArrayList<Double> TargetLong; // Sidelength of longest side of the fitted bounding box (pixels)
-    ArrayList<Double> TargetHorizontal; // Horizontal length of the fitted bounding box
-    ArrayList<Double> TargetVertical; // Vertical length of the fitted bounding box
-    ArrayList<Double> currentPipeline; // Array because it might be used when switching pipeline
+    static ArrayList<Double> TargetX; // Target's angle on the x-axis 
+    static ArrayList<Double> TargetY; // Target's angle on the y-axis 
+    static ArrayList<Double> TargetA; // Target's area on the screen
+    static ArrayList<Double> TargetV; // Target's Visibility on the screen 1.0 = true 0.0 = false
+    static ArrayList<Double> TargetS; // Target's skew/rotation on the screen
+    static  ArrayList<Double> Latency; // Latency of the camera in miliseconds
+    static ArrayList<Double> TargetShort; // Sidelength of shortest side of the fitted bounding box (pixels)
+    static ArrayList<Double> TargetLong; // Sidelength of longest side of the fitted bounding box (pixels)
+    static ArrayList<Double> TargetHorizontal; // Horizontal length of the fitted bounding box
+    static ArrayList<Double> TargetVertical; // Vertical length of the fitted bounding box
+    static ArrayList<Double> currentPipeline; // Array because it might be used when switching pipeline
 
-    ArrayList<Double> Targets = new ArrayList<Double>();
+    static ArrayList<Double> Targets = new ArrayList<Double>();
 
     public SnailVision(){
         TargetX = new ArrayList<Double>(); // Target's angle on the x-axis 
@@ -56,7 +56,7 @@ public class SnailVision {
         NetworkTableEntry tshortE = Table.getEntry("tshort");
         NetworkTableEntry tlongE = Table.getEntry("tlong");
         NetworkTableEntry thorE = Table.getEntry("thor");
-        NetworkTableEntry tverE = Table.getEntry("tvert");
+        NetworkTableEntry tvertE = Table.getEntry("tvert");
         NetworkTableEntry tgetpipeE = Table.getEntry("getpipe");
 
         TargetX.add(0, txE.getDouble(0)); // Target's angle on the x-axis 
@@ -71,7 +71,7 @@ public class SnailVision {
         TargetVertical.add(0, tvertE.getDouble(0)); // Vertical length of the fitted bounding box
         currentPipeline.add(0, tgetpipeE.getDouble(0));
             
-        if(TargetX.size > 60){ // Removes the last entry in the arraylist and shifts over the rest
+        if(TargetX.size() > 60){ // Removes the last entry in the arraylist and shifts over the rest
             TargetX.remove(60); // Target's angle on the x-axis 
             TargetY.remove(60); // Target's angle on the y-axis 
             TargetA.remove(60); // Target's area on the screen
@@ -87,9 +87,22 @@ public class SnailVision {
     }
 
     public double angleCorrect(){
-        
+        double tx = TargetX.get(0); // Gets the angle of how far away from the corsshair the object is
 
-        return(0); // temp
+        double Kf = ANGLE_CORRECT_F;  // Minimum motor input to move robot in case P can't do it 
+        double Kp = ANGLE_CORRECT_P; // for PID
+        double heading_error = tx; 
+        double steering_adjust = 0.0;
+
+        if (tx > ANGLE_CORRECT_MIN_ANGLE){ // If the angle of the target is farther than n degrees do normal pid
+            steering_adjust = Kp * heading_error;
+        } 
+        else if (tx < ANGLE_CORRECT_MIN_ANGLE) // If angle fo the target is less than n degrees, the motor will not be able to move the robot due to friction, so Kf is added to give it the minimum speed to move
+        {
+            steering_adjust = Kp * heading_error + Kf;
+        }
+
+        return(-steering_adjust); // return motor output
     }
 
     public double getInDistance(Target Target){
