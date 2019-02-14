@@ -115,9 +115,10 @@ public class SnailVision {
         return(0); // temp
     }
 
-    public double trigDistance(Target Target){
-
-        return(0); // temp
+    public double trigDistance(Target Target){ // More accurate than area distance but the target has to be high in the air above the camera
+        // Distance from Target = (Target Height - Camera Height) / tan(Angle of the Camera + Angle of the target above the Crosshair)
+        double distanceFromTarget = (Target.TARGET_HEIGHT[0] - CAMERA_HEIGHT) / Math.tan(Math.toRadians(CAMERA_ANGLE + TargetY.get(0)));
+        return(distanceFromTarget); // temp
     }
 
     public double findCameraAngle(double currentDistance, Target Target){ // Give the distance from a known target in inches
