@@ -11,6 +11,7 @@ public class SnailVision {
 
     static double GET_IN_DISTANCE_P;
     static double GET_IN_DISTANCE_ERROR;
+    static String DISTANCE_ESTIMATION_METHOD; // Either "trig" or "area"
 
     static double CAMERA_HEIGHT;
     static double CAMERA_ANGLE;
@@ -110,9 +111,34 @@ public class SnailVision {
         return(0); // temp
     }
     
-    public double areaDistance(Target Target){
+    public double areaDistance(Target Target){ // Returns inches significant up to the tenths place
+        double ta = TargetA.get(0);
+        double tv0 = TargetV.get(0); // Looks back 3 frames to see if the target was on the screen just to make sure that the limelight glitched and did not see the target for a split second
+        double tv1 = TargetV.get(1);
+        double tv2 = TargetV.get(2);
+        double minDifference = 10000; // Just so that it finds a smaller value
+        int minIndex = Target.AREA_PERCENT_MEASUREMENTS - 1; // The indexes of the array of percentages is the distance that the robot is from the target in inches
+         if(tv0 == 1.0 || tv1 == 1.0 || tv2 == 1.0){ // If the target is on screen in the past 3 frames
+            for(int i = 0; i < Target.AREA_PERCENT_MEASUREMENTS - 1; i++){
+                if(Target.AREA_TO_DISTANCE[i] - ta < minDifference && Target.AREA_TO_DISTANCE[i] - ta > 0){ // Finds the smallest difference in areas to find the distance the robot is from the target
+                    minDifference = Target.AREA_TO_DISTANCE[i] - ta;
+                    minIndex = i; 
+                }
+            }
+            
+            // Finds the average of the area between the two recorded constant points to find the average inch measurement in between
+            if(ta > Target.AREA_TO_DISTANCE[minIndex]){
+                minIndex += (ta - Target.AREA_TO_DISTANCE[minIndex]) / (Target.AREA_TO_DISTANCE[minIndex + 1] - Target.AREA_TO_DISTANCE[minIndex]);
+            }
+            else if (ta < Target.AREA_TO_DISTANCE[minIndex]){
+                minIndex += 1 - (Target.AREA_TO_DISTANCE[minIndex] - ta) / (Target.AREA_TO_DISTANCE[minIndex + 1] - Target.AREA_TO_DISTANCE[minIndex]);
+            }
 
-        return(0); // temp
+            return(minIndex);
+        }
+        else{ // If there is no target on the screen then return 0 as a distance so that the robot does not do something unexpected
+            return(0);
+        }
     }
 
     public double trigDistance(Target Target){ // More accurate than area distance but the target has to be high in the air above the camera
