@@ -279,7 +279,7 @@ public class SnailVision {
     }
 
     // Gyroscope NavX functionality - Included in SnailVision so that gyro works even if it is nowhere else in the project
-    public static double getRotationalAngle(){
+    public static double getRotationalAngle(){ // Angle of the robot as it rotates
         if(rotationalAxis == "yaw"){
             return getYawAngle(); // Has a default reset function
         }
