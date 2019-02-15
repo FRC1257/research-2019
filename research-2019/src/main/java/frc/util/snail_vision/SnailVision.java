@@ -6,6 +6,7 @@ import com.kauailabs.navx.frc.*;
 
 import java.util.*;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.Timer;
 
 public class SnailVision {
     static double ANGLE_CORRECT_P;
@@ -43,8 +44,14 @@ public class SnailVision {
     static String rotationalAxis; // Yaw - navx is flat pointing forward Pitch - navx is vertical pointing forward Roll - navx is vertical pointing sideways
     static AHRS navx;
     static double resetAngle;
+    static double currentAccelleration;
+    static double pastAccelleration; // 1 iteration behind
+    static Timer Timer;
+    static double instantaneousJerk;
+    static double JERK_COLLISION_THRESHOLD; // What the jerk has to be for it to be considered a collision
+    static boolean printIterationTime;
 
-    public SnailVision(){
+    public SnailVision(boolean utilizeGyro){
         TargetX = new ArrayList<Double>(); // Target's angle on the x-axis 
         TargetY = new ArrayList<Double>(); // Target's angle on the y-axis 
         TargetA = new ArrayList<Double>(); // Target's area on the screen
@@ -57,12 +64,19 @@ public class SnailVision {
         TargetVertical = new ArrayList<Double>(); // Vertical length of the fitted bounding box
         currentPipeline = new ArrayList<Double>(); // Array because it might be used when switching pipeline
         
-        useGyro = true; // By default, use a gyro
-        rotationalAxis = "yaw"; // Default is yaw
-        navx = new AHRS(Port.kMXP);
+        useGyro = utilizeGyro;
+        if(useGyro == true){
+            rotationalAxis = "yaw"; // Default is yaw
+            navx = new AHRS(Port.kMXP);
+            pastAccelleration = 0;
+            currentAccelleration = 0;
+            Timer = new Timer();
+            Timer.start();
+            printIterationTime = false;
+        }
     }
 
-    public static void networkTableFunctionality(NetworkTable Table){ // Works with limelight!
+    public void networkTableFunctionality(NetworkTable Table){ // Works with limelight!
         // NetworkTable Table = NetworkTableInstance.getDefault().getTable("limelight");
         
         // Creates objects which retrieve data from the limelight. The limelight MUST have these entries. Fill with 0 if they do not exist
@@ -279,9 +293,23 @@ public class SnailVision {
     }
 
     // Gyroscope NavX functionality - Included in SnailVision so that gyro works even if it is nowhere else in the project
+    public void gyroFunctionality(){
+        // Used for tracking the target offscreen
+        if(TargetV.get(0) == 1.0){
+            resetRotationalAngle(); // Make the front of robot's current position 0
+            resetAngle -= TargetX.get(0); // Changes the robot's current position to the center of the target
+        }
+
+        // Allows the user to see how long the RoboRIO delays between iterations if printIterationTime = true
+        printIterationTime();
+
+        // Used for jerk and collision detection
+        instantaneousJerk = calculateJerk();
+    }
+    
     public static double getRotationalAngle(){ // Angle of the robot as it rotates
         if(rotationalAxis == "yaw"){
-            return getYawAngle(); // Has a default reset function
+            return getYawAngle(); // Even though yaw has a reset funciton it is used with resetAngle so that an origin could be set
         }
         else if(rotationalAxis == "roll"){
             return getRollAngle(); // resetAngle is here to act as a reset function
@@ -296,7 +324,7 @@ public class SnailVision {
 
     public static void resetRotationalAngle(){
         if(rotationalAxis == "yaw"){
-            navx.zeroYaw();
+            resetAngle = navx.getYaw(); // Even though yaw has a reset funciton it is used like this so that an origin could be set
         }
         else if(rotationalAxis == "roll"){
             resetAngle = navx.getRoll();
@@ -307,7 +335,7 @@ public class SnailVision {
     }
 
     public static double getYawAngle() {
-        return (navx.getYaw());
+        return (navx.getYaw() - resetAngle); // Even though yaw has a reset funciton it is used like this so that an origin could be set
     }
 
     public static double getRollAngle() {
@@ -318,4 +346,32 @@ public class SnailVision {
         return (navx.getPitch() - resetAngle);
     }
 
+    public double getAccelleration() {
+        if(rotationalAxis == "yaw"){
+           return(navx.getRawAccelX());
+        }
+        else if(rotationalAxis == "roll"){
+            return(navx.getRawAccelY());
+        }
+        else if(rotationalAxis == "pitch"){
+            return(navx.getRawAccelZ());
+        }   
+        else{
+            return(0); // Just in case something breaks
+        }
+    }
+
+    public double calculateJerk(){
+        pastAccelleration = currentAccelleration;
+        currentAccelleration = getAccelleration();
+        double jerk = (pastAccelleration - currentAccelleration) / Timer.get(); // Change in accelleration = jerk
+        Timer.reset();
+        return(jerk);
+    }
+
+    public void printIterationTime(){
+        if(printIterationTime == true){
+            System.out.print(Timer.get() + ", ");
+        }
+    }
 }
