@@ -18,6 +18,9 @@ public class SnailVision {
 
     static double horizontalAngleFromTarget; // -180 to 0 to 180 degrees. Represents the last location the target was seen.
 
+    static ArrayList<Double> storedTargetAreaValues;
+    static ArrayList<Double> targetAreaValues;
+
     static ArrayList<Double> TargetX; // Target's angle on the x-axis 
     static ArrayList<Double> TargetY; // Target's angle on the y-axis 
     static ArrayList<Double> TargetA; // Target's area on the screen
@@ -168,7 +171,7 @@ public class SnailVision {
             }
         }
         else if (tv == 1.0){ // If the target is on the screen then auto-aim towards it
-            return(angleCorrect()); // temp
+            return(angleCorrect());
         }
 
         return(0);
@@ -177,6 +180,40 @@ public class SnailVision {
     public void trackTargetPosition(){
 
     }
+
+    // The next 3 functions are used to record the target area to distance for distance estimation using area
+    public void recordTargetArea(){ // Pressing a button loads area for that distance and removes outliers
+        double ta = TargetA.get(0);
+        storedTargetAreaValues.add(ta);
+        Collections.sort(storedTargetAreaValues); // Sorts the values so that the maximum and minimum could be found
+        if(storedTargetAreaValues.size() > 50){ // Removes outliers on the very edges
+            storedTargetAreaValues.remove(0);
+            storedTargetAreaValues.remove(storedTargetAreaValues.size() - 1);
+        }
+    }
+
+    public void clearTargetArea(){ // Releasing the button saves an average of the good data and clears a temporary array
+        storedTargetAreaValues.remove(0);
+        storedTargetAreaValues.remove(storedTargetAreaValues.size() - 1); // Removes final 2 possible outliers before averaging
+        double total = 0;
+        for(int i = 0; i < storedTargetAreaValues.size(); i++){ // Adds up all values stored to find the average
+            total += storedTargetAreaValues.get(i);
+        }
+        double average = total / storedTargetAreaValues.size(); // Average is found so that outliers do not impact the data
+        targetAreaValues.add(average);
+        storedTargetAreaValues.clear();
+    }
+
+    public void printTargetArea(){ // So that the user can copy and paste the data and make it a constant
+        for(int i = 0; i < targetAreaValues.size() - 1; i++){
+            System.out.print(targetAreaValues.get(i) + ", ");
+        }
+        if(targetAreaValues.size() > 0){ // So that if a user presses the button without first saving any valeus the program does not crash
+            System.out.println(targetAreaValues.get(targetAreaValues.size() - 1)); // Just used to print out data so that it could easily be copy and pasted into array format
+        }
+    }
+
+    // NetworkTable functions are below
 
     public static void changePipeline(NetworkTable Table, int pipeline){
         if(pipeline < 0 || pipeline > 9){
