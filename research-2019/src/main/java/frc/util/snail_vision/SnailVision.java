@@ -259,6 +259,11 @@ public class SnailVision {
         double average = total / storedTargetAreaValues.size(); // Average is found so that outliers do not impact the data
         targetAreaValues.add(average);
         storedTargetAreaValues.clear();
+    }  
+
+    public void resetTargetArea(){ // Completely resets the target measurement data collection process so that code doesn't have to be redeployed to measure another target
+        clearTargetArea();
+        targetAreaValues.clear();
     }
 
     public void printTargetArea(){ // So that the user can copy and paste the data and make it a constant
