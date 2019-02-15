@@ -206,10 +206,12 @@ public class SnailVision {
 
     public void trackTargetPosition(){
         if(useGyro == true){ // Track where the target is to turn towards it quicker
-
+            horizontalAngleFromTarget = getRotationalAngle();
         }
         else if (useGyro == false){ // Track where the target last left the screen to turn towards there
-
+            if(TargetV.get(0) == 1.0){ // Once the target is off screen, the function saves the last seen side 
+                horizontalAngleFromTarget = TargetX.get(0); 
+            }
         }
     }
 
