@@ -2,7 +2,10 @@ package frc.util.snail_vision;
 
 import edu.wpi.first.networktables.*;
 
+import com.kauailabs.navx.frc.*;
+
 import java.util.*;
+import edu.wpi.first.wpilibj.I2C.Port;
 
 public class SnailVision {
     static double ANGLE_CORRECT_P;
@@ -35,6 +38,12 @@ public class SnailVision {
 
     static ArrayList<Double> Targets = new ArrayList<Double>();
 
+    // Gyroscope Variables
+    static boolean useGyro;
+    static String rotationalAxis; // Yaw - navx is flat pointing forward Pitch - navx is vertical pointing forward Roll - navx is vertical pointing sideways
+    static AHRS navx;
+    static double resetAngle;
+
     public SnailVision(){
         TargetX = new ArrayList<Double>(); // Target's angle on the x-axis 
         TargetY = new ArrayList<Double>(); // Target's angle on the y-axis 
@@ -47,6 +56,10 @@ public class SnailVision {
         TargetHorizontal = new ArrayList<Double>(); // Horizontal length of the fitted bounding box
         TargetVertical = new ArrayList<Double>(); // Vertical length of the fitted bounding box
         currentPipeline = new ArrayList<Double>(); // Array because it might be used when switching pipeline
+        
+        useGyro = true; // By default, use a gyro
+        rotationalAxis = "yaw"; // Default is yaw
+        navx = new AHRS(Port.kMXP);
     }
 
     public static void networkTableFunctionality(NetworkTable Table){ // Works with limelight!
@@ -178,7 +191,12 @@ public class SnailVision {
     }
 
     public void trackTargetPosition(){
+        if(useGyro == true){ // Track where the target is to turn towards it quicker
 
+        }
+        else if (useGyro == false){ // Track where the target last left the screen to turn towards there
+
+        }
     }
 
     // The next 3 functions are used to record the target area to distance for distance estimation using area
@@ -258,6 +276,46 @@ public class SnailVision {
         else if(Table.getEntry("camMode").getDouble(0) == 1){
             Table.getEntry("camMode").setNumber(0);
         }
+    }
+
+    // Gyroscope NavX functionality - Included in SnailVision so that gyro works even if it is nowhere else in the project
+    public static double getRotationalAngle(){
+        if(rotationalAxis == "yaw"){
+            return getYawAngle(); // Has a default reset function
+        }
+        else if(rotationalAxis == "roll"){
+            return getRollAngle(); // resetAngle is here to act as a reset function
+        }
+        else if(rotationalAxis == "pitch"){
+            return getPitchAngle(); // resetAngle is here to act as a reset function
+        }
+        else{
+            return(0); // Just in case something breaks
+        }
+    }
+
+    public static void resetRotationalAngle(){
+        if(rotationalAxis == "yaw"){
+            navx.zeroYaw();
+        }
+        else if(rotationalAxis == "roll"){
+            resetAngle = navx.getRoll();
+        }
+        else if(rotationalAxis == "pitch"){
+            resetAngle = navx.getPitch();
+        }
+    }
+
+    public static double getYawAngle() {
+        return (navx.getYaw());
+    }
+
+    public static double getRollAngle() {
+        return (navx.getRoll() - resetAngle);
+    }
+    
+    public static double getPitchAngle() {
+        return (navx.getPitch() - resetAngle);
     }
 
 }
