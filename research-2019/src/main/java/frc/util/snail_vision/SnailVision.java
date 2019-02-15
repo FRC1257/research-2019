@@ -1,3 +1,8 @@
+/*
+Created by Adam Zamlynny
+Contact: azamlynny@hotmail.com
+*/
+
 package frc.util.snail_vision;
 
 import edu.wpi.first.networktables.*;
@@ -138,9 +143,27 @@ public class SnailVision {
         return(-steering_adjust); // return motor output
     }
 
-    public double getInDistance(Target Target){ 
+    public double getInDistance(Target Target, int targetHeightLevel){ // targetHeightLevel is used for if there are multiple levels of targets 
+        double currentDistance = 0;
 
-        return(0); // temp
+        if(DISTANCE_ESTIMATION_METHOD == "area"){
+            currentDistance = areaDistance(Target);
+        }
+        else if(DISTANCE_ESTIMATION_METHOD == "trig"){
+            currentDistance = trigDistance(Target);
+        }
+        else{
+            return(0); // No distance estimation method was selected
+        }
+        
+        double distanceError = currentDistance - Target.DESIRED_DISTANCE[targetHeightLevel];
+        double driving_adjust = 0;
+
+        if(distanceError > GET_IN_DISTANCE_ERROR){ // 3 inches of error space for PID
+            driving_adjust = GET_IN_DISTANCE_P * distanceError;
+        }
+
+        return(driving_adjust); // return motor output
     }
     
     public double areaDistance(Target Target){ // Returns inches significant up to the tenths place
@@ -176,7 +199,7 @@ public class SnailVision {
     public double trigDistance(Target Target){ // More accurate than area distance but the target has to be high in the air above the camera
         // Distance from Target = (Target Height - Camera Height) / tan(Angle of the Camera + Angle of the target above the Crosshair)
         double distanceFromTarget = (Target.TARGET_HEIGHT[0] - CAMERA_HEIGHT) / Math.tan(Math.toRadians(CAMERA_ANGLE + TargetY.get(0)));
-        return(distanceFromTarget); // temp
+        return(distanceFromTarget);
     }
 
     public double findCameraAngle(double currentDistance, Target Target){ // Give the distance from a known target in inches
