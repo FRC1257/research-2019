@@ -8,6 +8,7 @@ package frc.util.snail_vision;
 import edu.wpi.first.networktables.*;
 
 import com.kauailabs.navx.frc.*;
+import com.sun.jdi.IntegerValue;
 
 import java.util.*;
 import edu.wpi.first.wpilibj.I2C.Port;
@@ -33,14 +34,14 @@ public class SnailVision {
     static ArrayList<Double> TargetX; // Target's angle on the x-axis 
     static ArrayList<Double> TargetY; // Target's angle on the y-axis 
     static ArrayList<Double> TargetA; // Target's area on the screen
-    static ArrayList<Double> TargetV; // Target's Visibility on the screen 1.0 = true 0.0 = false
+    static ArrayList<Boolean> TargetV; // Target's Visibility on the screen 1.0 = true 0.0 = false
     static ArrayList<Double> TargetS; // Target's skew/rotation on the screen
-    static ArrayList<Double> Latency; // Latency of the camera in miliseconds
+    static ArrayList<Integer> Latency; // Latency of the camera in miliseconds
     static ArrayList<Double> TargetShort; // Sidelength of shortest side of the fitted bounding box (pixels)
     static ArrayList<Double> TargetLong; // Sidelength of longest side of the fitted bounding box (pixels)
     static ArrayList<Double> TargetHorizontal; // Horizontal length of the fitted bounding box
     static ArrayList<Double> TargetVertical; // Vertical length of the fitted bounding box
-    static ArrayList<Double> currentPipeline; // Array because it might be used when switching pipeline
+    static ArrayList<Byte> currentPipeline; // Array because it might be used when switching pipeline
 
     static ArrayList<Double> Targets = new ArrayList<Double>();
 
@@ -60,14 +61,14 @@ public class SnailVision {
         TargetX = new ArrayList<Double>(); // Target's angle on the x-axis 
         TargetY = new ArrayList<Double>(); // Target's angle on the y-axis 
         TargetA = new ArrayList<Double>(); // Target's area on the screen
-        TargetV = new ArrayList<Double>(); // Target's visibility on the screen 1.0 = true 0.0 = false
+        TargetV = new ArrayList<Boolean>(); // Target's visibility on the screen
         TargetS = new ArrayList<Double>(); // Target's skew/rotation on the screen
-        Latency = new ArrayList<Double>(); // Latency of the camera in miliseconds
+        Latency = new ArrayList<Integer>(); // Latency of the camera in miliseconds
         TargetShort = new ArrayList<Double>(); // Sidelength of shortest side of the fitted bounding box (pixels)
         TargetLong = new ArrayList<Double>(); // Sidelength of longest side of the fitted bounding box (pixels)
         TargetHorizontal = new ArrayList<Double>(); // Horizontal length of the fitted bounding box
         TargetVertical = new ArrayList<Double>(); // Vertical length of the fitted bounding box
-        currentPipeline = new ArrayList<Double>(); // Array because it might be used when switching pipeline
+        currentPipeline = new ArrayList<Byte>(); // Array because it might be used when switching pipeline. Byte saves RAM
         
         useGyro = utilizeGyro;
         if(useGyro == true){
@@ -100,20 +101,26 @@ public class SnailVision {
         TargetX.add(0, txE.getDouble(0)); // Target's angle on the x-axis 
         TargetY.add(0, tyE.getDouble(0)); // Target's angle on the y-axis 
         TargetA.add(0, taE.getDouble(0)); // Target's area on the screen
-        TargetV.add(0, tvE.getDouble(0)); // Target's visibility on the screen 1.0 = true 0.0 = false
+        double targetVisible = tvE.getDouble(0); // Converts double 1.0 or 0.0 for visibility to a boolean to save RAM
+        if(targetVisible == 1.0){
+            TargetV.add(0, true);
+        }
+        else if(targetVisible == 0.0){
+            TargetV.add(0, false);
+        }
         TargetS.add(0, tsE.getDouble(0)); // Target's skew/rotation on the screen
-        Latency.add(0, tlE.getDouble(0)); // Latency of the camera in miliseconds
+        Latency.add(0, (int) tlE.getDouble(0)); // Latency of the camera in miliseconds
         TargetShort.add(0, tshortE.getDouble(0)); // Sidelength of shortest side of the fitted bounding box (pixels)
         TargetLong.add(0, tlongE.getDouble(0)); // Sidelength of longest side of the fitted bounding box (pixels)
         TargetHorizontal.add(0, thorE.getDouble(0)); // Horizontal length of the fitted bounding box
         TargetVertical.add(0, tvertE.getDouble(0)); // Vertical length of the fitted bounding box
-        currentPipeline.add(0, tgetpipeE.getDouble(0));
+        currentPipeline.add(0, (byte) tgetpipeE.getDouble(0));
             
         if(TargetX.size() > 60){ // Removes the last entry in the arraylist and shifts over the rest
             TargetX.remove(60); // Target's angle on the x-axis 
             TargetY.remove(60); // Target's angle on the y-axis 
             TargetA.remove(60); // Target's area on the screen
-            TargetV.remove(60); // Target's visibility on the screen 1.0 = true 0.0 = false
+            TargetV.remove(60); // Target's visibility on the screen 
             TargetS.remove(60); // Target's skew/rotation on the screen
             Latency.remove(60); // Latency of the camera in miliseconds
             TargetShort.remove(60); // Sidelength of shortest side of the fitted bounding box (pixels)
@@ -168,12 +175,12 @@ public class SnailVision {
     
     public double areaDistance(Target Target){ // Returns inches significant up to the tenths place
         double ta = TargetA.get(0);
-        double tv0 = TargetV.get(0); // Looks back 3 frames to see if the target was on the screen just to make sure that the limelight glitched and did not see the target for a split second
-        double tv1 = TargetV.get(1);
-        double tv2 = TargetV.get(2);
+        boolean tv0 = TargetV.get(0); // Looks back 3 frames to see if the target was on the screen just to make sure that the limelight glitched and did not see the target for a split second
+        boolean tv1 = TargetV.get(1);
+        boolean tv2 = TargetV.get(2);
         double minDifference = 10000; // Just so that it finds a smaller value
         int minIndex = Target.AREA_PERCENT_MEASUREMENTS - 1; // The indexes of the array of percentages is the distance that the robot is from the target in inches
-         if(tv0 == 1.0 || tv1 == 1.0 || tv2 == 1.0){ // If the target is on screen in the past 3 frames
+         if(tv0 == true || tv1 == true || tv2 == true){ // If the target is on screen in the past 3 frames
             for(int i = 0; i < Target.AREA_PERCENT_MEASUREMENTS - 1; i++){
                 if(Target.AREA_TO_DISTANCE[i] - ta < minDifference && Target.AREA_TO_DISTANCE[i] - ta > 0){ // Finds the smallest difference in areas to find the distance the robot is from the target
                     minDifference = Target.AREA_TO_DISTANCE[i] - ta;
@@ -210,9 +217,9 @@ public class SnailVision {
     }
 
     public double findTarget(){
-        double tv = TargetV.get(0);
+        boolean tv = TargetV.get(0);
 
-        if(tv == 0.0){ // If the target is not on the screen then spin towards it
+        if(tv == true){ // If the target is not on the screen then spin towards it
             if(horizontalAngleFromTarget < 0){
                 return(-0.5);
             }
@@ -220,7 +227,7 @@ public class SnailVision {
                 return(0.5);
             }
         }
-        else if (tv == 1.0){ // If the target is on the screen then auto-aim towards it
+        else if (tv == true){ // If the target is on the screen then auto-aim towards it
             return(angleCorrect());
         }
 
@@ -232,7 +239,7 @@ public class SnailVision {
             horizontalAngleFromTarget = getRotationalAngle();
         }
         else if (useGyro == false){ // Track where the target last left the screen to turn towards there
-            if(TargetV.get(0) == 1.0){ // Once the target is off screen, the function saves the last seen side 
+            if(TargetV.get(0) == true){ // Once the target is off screen, the function saves the last seen side 
                 horizontalAngleFromTarget = TargetX.get(0); 
             }
         }
@@ -325,7 +332,7 @@ public class SnailVision {
     // Gyroscope NavX functionality - Included in SnailVision so that gyro works even if it is nowhere else in the project
     public void gyroFunctionality(){
         // Used for tracking the target offscreen
-        if(TargetV.get(0) == 1.0){
+        if(TargetV.get(0) == true){
             resetRotationalAngle(); // Make the front of robot's current position 0
             resetAngle -= TargetX.get(0); // Changes the robot's current position to the center of the target
         }
