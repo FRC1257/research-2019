@@ -14,7 +14,7 @@ Snail Vision is a library created as a calculation library for vision. It works 
 # Documentation
 
 ## Table of Contents
-  * [Changeable Variables and Options](changeable-variables-and-options)
+  * [Changeable Variables and Options](#changeable-variables-and-options)
     * Placeholder Text
   * Functions
   
