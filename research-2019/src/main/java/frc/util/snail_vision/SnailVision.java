@@ -8,54 +8,53 @@ package frc.util.snail_vision;
 import edu.wpi.first.networktables.*;
 
 import com.kauailabs.navx.frc.*;
-import com.sun.jdi.IntegerValue;
 
 import java.util.*;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Timer;
 
 public class SnailVision {
-    static double ANGLE_CORRECT_P;
-    static double ANGLE_CORRECT_F;
-    static double ANGLE_CORRECT_MIN_ANGLE;
+    public double ANGLE_CORRECT_P;
+    public double ANGLE_CORRECT_F;
+    public double ANGLE_CORRECT_MIN_ANGLE;
 
-    static double GET_IN_DISTANCE_P;
-    static double GET_IN_DISTANCE_ERROR;
-    static String DISTANCE_ESTIMATION_METHOD; // Either "trig" or "area"
+    public double GET_IN_DISTANCE_P;
+    public double GET_IN_DISTANCE_ERROR;
+    public String DISTANCE_ESTIMATION_METHOD; // Either "trig" or "area"
 
-    static double CAMERA_HEIGHT;
-    static double CAMERA_ANGLE;
+    public double CAMERA_HEIGHT;
+    public double CAMERA_ANGLE;
 
-    static double horizontalAngleFromTarget; // -180 to 0 to 180 degrees. Represents the last location the target was seen.
+    public double horizontalAngleFromTarget; // -180 to 0 to 180 degrees. Represents the last location the target was seen.
 
-    static ArrayList<Double> storedTargetAreaValues;
-    static ArrayList<Double> targetAreaValues;
+    public ArrayList<Double> storedTargetAreaValues;
+    public ArrayList<Double> targetAreaValues;
 
-    static ArrayList<Double> TargetX; // Target's angle on the x-axis 
-    static ArrayList<Double> TargetY; // Target's angle on the y-axis 
-    static ArrayList<Double> TargetA; // Target's area on the screen
-    static ArrayList<Boolean> TargetV; // Target's Visibility on the screen 1.0 = true 0.0 = false
-    static ArrayList<Double> TargetS; // Target's skew/rotation on the screen
-    static ArrayList<Integer> Latency; // Latency of the camera in miliseconds
-    static ArrayList<Double> TargetShort; // Sidelength of shortest side of the fitted bounding box (pixels)
-    static ArrayList<Double> TargetLong; // Sidelength of longest side of the fitted bounding box (pixels)
-    static ArrayList<Double> TargetHorizontal; // Horizontal length of the fitted bounding box
-    static ArrayList<Double> TargetVertical; // Vertical length of the fitted bounding box
-    static ArrayList<Byte> currentPipeline; // Array because it might be used when switching pipeline
+    public ArrayList<Double> TargetX; // Target's angle on the x-axis 
+    public ArrayList<Double> TargetY; // Target's angle on the y-axis 
+    public ArrayList<Double> TargetA; // Target's area on the screen
+    public ArrayList<Boolean> TargetV; // Target's Visibility on the screen 1.0 = true 0.0 = false
+    public ArrayList<Double> TargetS; // Target's skew/rotation on the screen
+    public ArrayList<Integer> Latency; // Latency of the camera in miliseconds
+    public ArrayList<Double> TargetShort; // Sidelength of shortest side of the fitted bounding box (pixels)
+    public ArrayList<Double> TargetLong; // Sidelength of longest side of the fitted bounding box (pixels)
+    public ArrayList<Double> TargetHorizontal; // Horizontal length of the fitted bounding box
+    public ArrayList<Double> TargetVertical; // Vertical length of the fitted bounding box
+    public ArrayList<Byte> currentPipeline; // Array because it might be used when switching pipeline
 
-    static ArrayList<Double> Targets = new ArrayList<Double>();
+    public  ArrayList<Target> TARGETS = new ArrayList<Target>();
 
     // Gyroscope Variables
-    static boolean useGyro;
-    static String rotationalAxis; // Yaw - navx is flat pointing forward Pitch - navx is vertical pointing forward Roll - navx is vertical pointing sideways
-    static AHRS navx;
-    static double resetAngle;
-    static double currentAccelleration;
-    static double pastAccelleration; // 1 iteration behind
-    static Timer Timer;
-    static double instantaneousJerk;
-    static double JERK_COLLISION_THRESHOLD; // What the jerk has to be for it to be considered a collision
-    static boolean printIterationTime;
+    public boolean useGyro;
+    public String rotationalAxis; // Yaw - navx is flat pointing forward Pitch - navx is vertical pointing forward Roll - navx is vertical pointing sideways
+    public AHRS navx;
+    public double resetAngle;
+    public double currentAccelleration;
+    public double pastAccelleration; // 1 iteration behind
+    public Timer Timer;
+    public double instantaneousJerk;
+    public double JERK_COLLISION_THRESHOLD; // What the jerk has to be for it to be considered a collision
+    public boolean printIterationTime;
 
     public SnailVision(boolean utilizeGyro){
         TargetX = new ArrayList<Double>(); // Target's angle on the x-axis 
@@ -150,7 +149,7 @@ public class SnailVision {
         return(-steering_adjust); // return motor output
     }
 
-    public double getInDistance(Target Target, int targetHeightLevel){ // targetHeightLevel is used for if there are multiple levels of targets 
+    public double getInDistance(Target Target){ // targetHeightLevel is used for if there are multiple levels of targets 
         double currentDistance = 0;
 
         if(DISTANCE_ESTIMATION_METHOD == "area"){
@@ -163,7 +162,7 @@ public class SnailVision {
             return(0); // No distance estimation method was selected
         }
         
-        double distanceError = currentDistance - Target.DESIRED_DISTANCE[targetHeightLevel];
+        double distanceError = currentDistance - Target.DESIRED_DISTANCE;
         double driving_adjust = 0;
 
         if(distanceError > GET_IN_DISTANCE_ERROR){ // 3 inches of error space for PID
@@ -205,13 +204,13 @@ public class SnailVision {
 
     public double trigDistance(Target Target){ // More accurate than area distance but the target has to be high in the air above the camera
         // Distance from Target = (Target Height - Camera Height) / tan(Angle of the Camera + Angle of the target above the Crosshair)
-        double distanceFromTarget = (Target.TARGET_HEIGHT[0] - CAMERA_HEIGHT) / Math.tan(Math.toRadians(CAMERA_ANGLE + TargetY.get(0)));
+        double distanceFromTarget = (Target.TARGET_HEIGHT - CAMERA_HEIGHT) / Math.tan(Math.toRadians(CAMERA_ANGLE + TargetY.get(0)));
         return(distanceFromTarget);
     }
 
     public double findCameraAngle(double currentDistance, Target Target){ // Give the distance from a known target in inches
         // Camera Angle = arctan((Target Height - Camera Height) / Distance from Target) - Angle of Target Above Camera's Crosshair
-        double cameraAngle = Math.atan(Math.toRadians( ( (Target.TARGET_HEIGHT[0] - CAMERA_HEIGHT) / currentDistance) - TargetY.get(0)));
+        double cameraAngle = Math.atan(Math.toRadians( ( (Target.TARGET_HEIGHT - CAMERA_HEIGHT) / currentDistance) - TargetY.get(0)));
         System.out.println("Camera Angle" + cameraAngle);
         return(cameraAngle);
     }
@@ -344,7 +343,7 @@ public class SnailVision {
         instantaneousJerk = calculateJerk();
     }
     
-    public static double getRotationalAngle(){ // Angle of the robot as it rotates
+    public double getRotationalAngle(){ // Angle of the robot as it rotates
         if(rotationalAxis == "yaw"){
             return getYawAngle(); // Even though yaw has a reset funciton it is used with resetAngle so that an origin could be set
         }
@@ -359,7 +358,7 @@ public class SnailVision {
         }
     }
 
-    public static void resetRotationalAngle(){
+    public void resetRotationalAngle(){
         if(rotationalAxis == "yaw"){
             resetAngle = navx.getYaw(); // Even though yaw has a reset funciton it is used like this so that an origin could be set
         }
@@ -371,15 +370,15 @@ public class SnailVision {
         }
     }
 
-    public static double getYawAngle() {
+    public double getYawAngle() {
         return (navx.getYaw() - resetAngle); // Even though yaw has a reset funciton it is used like this so that an origin could be set
     }
 
-    public static double getRollAngle() {
+    public double getRollAngle() {
         return (navx.getRoll() - resetAngle);
     }
     
-    public static double getPitchAngle() {
+    public double getPitchAngle() {
         return (navx.getPitch() - resetAngle);
     }
 
