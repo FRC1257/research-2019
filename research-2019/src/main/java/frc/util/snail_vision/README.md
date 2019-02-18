@@ -19,12 +19,14 @@ int {integer} = {number}
 
 
 # Table of Contents
+  * [The SnailVision Object](#the-snailvision-object)
   * [Changeable Variables and Options](#changeable-variables-and-options)
-    * 
   * [Retrievable Data](#retrievable-data)
   * [Functions](#functions)
   * [Contact Information](#contact-information)
-  
+
+## The SnailVision Object
+
 ## Changeable Variables and Options
 Changeable variables and options contains values that could be changed to change options and such by using 
 
