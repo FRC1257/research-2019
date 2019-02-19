@@ -20,7 +20,22 @@ int {integer} = {number}
 
 # Table of Contents
   * [The SnailVision Object](#the-snailvision-object)
-  * [Changeable Variables and Options](#changeable-variables-and-options)
+  * [Constants and Options](#constants-and-options)
+    * [angleCorrect Constants](#anglecorrect-constants)
+      * [ANGLE_CORRECT_P](#angle_correct_p)
+      * [ANGLE_CORRECT_F](#angle_correct_f)
+      * [ANGLE_CORRECT_MIN_ANGLE](#angle_correct_min_angle)
+    * [getInDistance Constants](#getindistance-constants)
+      * [GET_IN_DISTANCE_P](#get_in_distance_p)
+      * [GET_IN_DISTANCE_ERROR](#get_in_distance_error)
+      * [DISTANCE_ESTIMATION_METHOD](#distance_estimation_method)
+      * [TARGETS](#targets)
+    * [trigDistance Constants](#trigdistance-constants)
+      * [CAMERA_HEIGHT](#camera_height)
+      * [CAMERA_ANGLE](#camera_angle)
+    * [Gyro Constants](#gyro-constants)
+      * [USE_GYRO](#use_gyro)
+      * [ROTATIONAL_AXIS](#rotational_axis)
   * [Retrievable Data](#retrievable-data)
   * [Functions](#functions)
     * [Vision Functions](#vision-functions)
@@ -58,8 +73,8 @@ int {integer} = {number}
 
 ## The SnailVision Object
 
-## Changeable Variables and Options
-Changeable variables and options contains values that could be changed to change options and such by using 
+## Constants and Options
+Constants and options contains values that could be changed to change options and such by using 
 
 ``` 
 {snail-vision-object}.{variable} = {value};
