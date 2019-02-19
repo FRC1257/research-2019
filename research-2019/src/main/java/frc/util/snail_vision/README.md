@@ -23,6 +23,20 @@ int {integer} = {number}
   * [Changeable Variables and Options](#changeable-variables-and-options)
   * [Retrievable Data](#retrievable-data)
   * [Functions](#functions)
+    * [networkTableFunctionality](#networktablefunctionality)
+    * [angleCorrect](#anglecorrect)
+    * [getInDistance](#getindistance)
+    * [areaDistance](#areadistance)
+    * [trigDistance](#trigdistance)
+    * [findTarget](#findtarget)
+    * [trackTargetPosition](#tracktargetposition)
+    * [recordTargetArea](#recordtargetarea)
+    * [clearTargetArea](#cleartargetarea)
+    * [resetTargetArea](#resettargetarea)
+    * [printTargetArea](#printtargetarea)
+    * [changePipeline](#changepipeline)
+    * [toggleLimelightScreenshot](#togglelimelightscreenshot)
+    * [turnOffLimelight](#turnofflimelight)
   * [Contact Information](#contact-information)
 
 ## The SnailVision Object
@@ -39,6 +53,58 @@ Retrievable data contains values that are calculated by Snail Vision during oper
 
 ## Functions
 Functions describes all of the functions used by Snail Vision.
+
+### networkTableFunctionality
+
+### angleCorrect
+
+### getInDistance
+
+### areaDistance
+
+### trigDistance
+
+### findTarget
+
+### trackTargetPosition
+
+### recordTargetArea
+
+### clearTargetArea
+
+### resetTargetArea
+
+### printTargetArea
+
+### changePipeline
+
+### toggleLimelightScreenshot
+
+### turnOffLimelight
+
+### turnOnLimelight
+
+### blinkLimelight
+
+### toggleLimelightMode
+
+### gyroFunctionality
+
+### getRotationalAngle
+
+### resetROtationalAngle
+
+### getYawAngle
+
+### getRollAngle
+
+### getPitchAngle
+
+### getAccelleration
+
+### calculateJerk
+
+### printIterationTime
 
 ## Contact Information
 Snail Vision was created by Adam Zamlynny in 2019. Feel free to contact me at azamlynny@hotmail.com if you have any questions!
