@@ -37,6 +37,18 @@ int {integer} = {number}
     * [changePipeline](#changepipeline)
     * [toggleLimelightScreenshot](#togglelimelightscreenshot)
     * [turnOffLimelight](#turnofflimelight)
+    * [turnOnLimelight](#turnonlimelight)
+    * [blinkLimelight](#blinklimelight)
+    * [toggleLimelightMode](#togglelimelightmode)
+    * [gyroFunctionality](#gyrofunctionality)
+    * [getRotationalAngle](#getrotationalangle)
+    * [resetRotationalAngle](#resetrotationalangle)
+    * [getYawAngle](#getyawangle)
+    * [getRollAngle](#getrollangle)
+    * [getPitchAngle](#getpitchangle)
+    * [getAccelleration](#getaccelleration)
+    * [calculateJerk](#calculatejerk)
+    * [printIterationTime](#printIterationTime)
   * [Contact Information](#contact-information)
 
 ## The SnailVision Object
@@ -92,7 +104,7 @@ Functions describes all of the functions used by Snail Vision.
 
 ### getRotationalAngle
 
-### resetROtationalAngle
+### resetRotationalAngle
 
 ### getYawAngle
 
