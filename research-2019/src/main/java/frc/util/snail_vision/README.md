@@ -23,32 +23,37 @@ int {integer} = {number}
   * [Changeable Variables and Options](#changeable-variables-and-options)
   * [Retrievable Data](#retrievable-data)
   * [Functions](#functions)
-    * [networkTableFunctionality](#networktablefunctionality)
-    * [angleCorrect](#anglecorrect)
-    * [getInDistance](#getindistance)
-    * [areaDistance](#areadistance)
-    * [trigDistance](#trigdistance)
-    * [findTarget](#findtarget)
-    * [trackTargetPosition](#tracktargetposition)
-    * [recordTargetArea](#recordtargetarea)
-    * [clearTargetArea](#cleartargetarea)
-    * [resetTargetArea](#resettargetarea)
-    * [printTargetArea](#printtargetarea)
-    * [changePipeline](#changepipeline)
-    * [toggleLimelightScreenshot](#togglelimelightscreenshot)
-    * [turnOffLimelight](#turnofflimelight)
-    * [turnOnLimelight](#turnonlimelight)
-    * [blinkLimelight](#blinklimelight)
-    * [toggleLimelightMode](#togglelimelightmode)
-    * [gyroFunctionality](#gyrofunctionality)
-    * [getRotationalAngle](#getrotationalangle)
-    * [resetRotationalAngle](#resetrotationalangle)
-    * [getYawAngle](#getyawangle)
-    * [getRollAngle](#getrollangle)
-    * [getPitchAngle](#getpitchangle)
-    * [getAccelleration](#getaccelleration)
-    * [calculateJerk](#calculatejerk)
-    * [printIterationTime](#printIterationTime)
+    * [Vision Functions](#vision-functions)
+      * [networkTableFunctionality](#networktablefunctionality)
+      * [angleCorrect](#anglecorrect)
+      * [getInDistance](#getindistance)
+      * [areaDistance](#areadistance)
+      * [trigDistance](#trigdistance)
+      * [findTarget](#findtarget)
+      * [trackTargetPosition](#tracktargetposition)
+      * [changePipeline](#changepipeline)
+    * [Data Collection Functions](#data-collection-functions)
+      * [findCameraAngle](#findcameraangle)
+      * [recordTargetArea](#recordtargetarea)
+      * [clearTargetArea](#cleartargetarea)
+      * [resetTargetArea](#resettargetarea)
+      * [printTargetArea](#printtargetarea)
+      * [printIterationTime](#printIterationTime)
+    * [Limelight Functions](#limelight-functions)
+      * [toggleLimelightScreenshot](#togglelimelightscreenshot)
+      * [turnOffLimelight](#turnofflimelight)
+      * [turnOnLimelight](#turnonlimelight)
+      * [blinkLimelight](#blinklimelight)
+      * [toggleLimelightMode](#togglelimelightmode)
+    * [NavX Gyro Functions](#navx-gyro-functions)
+      * [gyroFunctionality](#gyrofunctionality)
+      * [getRotationalAngle](#getrotationalangle)
+      * [resetRotationalAngle](#resetrotationalangle)
+      * [getYawAngle](#getyawangle)
+      * [getRollAngle](#getrollangle)
+      * [getPitchAngle](#getpitchangle)
+      * [getAccelleration](#getaccelleration)
+      * [calculateJerk](#calculatejerk)
   * [Contact Information](#contact-information)
 
 ## The SnailVision Object
@@ -66,6 +71,8 @@ Retrievable data contains values that are calculated by Snail Vision during oper
 ## Functions
 Functions describes all of the functions used by Snail Vision.
 
+## Vision Functions
+
 ### networkTableFunctionality
 
 ### angleCorrect
@@ -80,6 +87,12 @@ Functions describes all of the functions used by Snail Vision.
 
 ### trackTargetPosition
 
+### changePipeline
+
+## Data Collection Functions
+
+### findCameraAngle
+
 ### recordTargetArea
 
 ### clearTargetArea
@@ -88,7 +101,9 @@ Functions describes all of the functions used by Snail Vision.
 
 ### printTargetArea
 
-### changePipeline
+### printIterationTime
+
+## Limelight Functions
 
 ### toggleLimelightScreenshot
 
@@ -99,6 +114,8 @@ Functions describes all of the functions used by Snail Vision.
 ### blinkLimelight
 
 ### toggleLimelightMode
+
+## NavX Gyro functions
 
 ### gyroFunctionality
 
@@ -115,8 +132,6 @@ Functions describes all of the functions used by Snail Vision.
 ### getAccelleration
 
 ### calculateJerk
-
-### printIterationTime
 
 ## Contact Information
 Snail Vision was created by Adam Zamlynny in 2019. Feel free to contact me at azamlynny@hotmail.com if you have any questions!
