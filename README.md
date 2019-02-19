@@ -56,7 +56,7 @@ int {integer} = {number}
         * [pastAccelleration](#pastaccelleration)
         * [printIterationTime](#printiterationtime)
         * [horizontalAngleFromTarget](#horizontalanglefromtarget)
-        * [instantaneousJerk](#instantaneousJerk)
+        * [instantaneousJerk](#instantaneousjerk)
       * [Measurement Data](#measurement-data)
         * [Timer](#Timer)
         * [storedTargetAreaValues](#storedtargetareavalues)
@@ -148,7 +148,20 @@ Retrievable data contains values that are calculated by Snail Vision during oper
 
 ## Vision Data
 
+All of the Vision Data is stored in ArrayLists. The follwoing variables hold the last 60 frames the camera has seen.
+
+Vision data in ArrayLists could be retrieved by
+```
+{snail-vision-object}.{variable-name}.get({index-of-the-ArrayList})
+```
+
+Example: The robot needs to check whether it saw the target exactly 3 frames ago:
+```
+{snail-vision-object}.TargetV.get(2);
+```
+
 ### TargetX
+TargetX represents the horizontal angle the target is from the center of the camera's vision (or crosshair)
 
 ### TargetY
 
