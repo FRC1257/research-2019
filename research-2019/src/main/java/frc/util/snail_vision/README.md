@@ -146,6 +146,56 @@ Constants and options contains values that could be changed to change options an
 Retrievable data contains values that are calculated by Snail Vision during operation and might be useful depending on the situation.
 
 
+## Vision Data
+
+### TargetX
+
+### TargetY
+
+### TargetA
+
+### TargetV
+
+### TargetS
+
+### Latency
+
+### TargetShort
+
+### TargetLong
+
+### TargetHorizontal
+
+### TargetVertical
+
+### currentPipeline
+
+
+## Gyro Data
+
+### navx
+
+### resetAngle
+
+### currentAccelleration
+
+### pastAccelleration
+
+### printIterationTime
+
+### horizontalAngleFromTarget
+
+### instantaneousJerk
+
+
+## Measurement Data
+
+### Timer
+
+### storedTargetAreaValues
+
+### TargetAreaValues
+
 
 ## Functions
 Functions describes all of the functions used by Snail Vision.
