@@ -21,11 +21,10 @@ public class SnailVision {
     public double GET_IN_DISTANCE_P;
     public double GET_IN_DISTANCE_ERROR;
     public String DISTANCE_ESTIMATION_METHOD; // Either "trig" or "area"
+    public ArrayList<Target> TARGETS = new ArrayList<Target>();
 
     public double CAMERA_HEIGHT;
     public double CAMERA_ANGLE;
-
-    public double horizontalAngleFromTarget; // -180 to 0 to 180 degrees. Represents the last location the target was seen.
 
     public ArrayList<Double> storedTargetAreaValues;
     public ArrayList<Double> targetAreaValues;
@@ -42,11 +41,9 @@ public class SnailVision {
     public ArrayList<Double> TargetVertical; // Vertical length of the fitted bounding box
     public ArrayList<Byte> currentPipeline; // Array because it might be used when switching pipeline
 
-    public  ArrayList<Target> TARGETS = new ArrayList<Target>();
-
     // Gyroscope Variables
-    public boolean useGyro;
-    public String rotationalAxis; // Yaw - navx is flat pointing forward Pitch - navx is vertical pointing forward Roll - navx is vertical pointing sideways
+    public boolean USE_GYRO;
+    public String ROTATIONAL_AXIS; // Yaw - navx is flat pointing forward Pitch - navx is vertical pointing forward Roll - navx is vertical pointing sideways
     public AHRS navx;
     public double resetAngle;
     public double currentAccelleration;
@@ -55,6 +52,7 @@ public class SnailVision {
     public double instantaneousJerk;
     public double JERK_COLLISION_THRESHOLD; // What the jerk has to be for it to be considered a collision
     public boolean printIterationTime;
+    public double horizontalAngleFromTarget; // -180 to 0 to 180 degrees. Represents the last location the target was seen.
 
     public SnailVision(boolean utilizeGyro){
         TargetX = new ArrayList<Double>(); // Target's angle on the x-axis 
@@ -69,9 +67,9 @@ public class SnailVision {
         TargetVertical = new ArrayList<Double>(); // Vertical length of the fitted bounding box
         currentPipeline = new ArrayList<Byte>(); // Array because it might be used when switching pipeline. Byte saves RAM
         
-        useGyro = utilizeGyro;
-        if(useGyro == true){
-            rotationalAxis = "yaw"; // Default is yaw
+        USE_GYRO = utilizeGyro;
+        if(USE_GYRO == true){
+            ROTATIONAL_AXIS = "yaw"; // Default is yaw
             navx = new AHRS(Port.kMXP);
             pastAccelleration = 0;
             currentAccelleration = 0;
@@ -234,10 +232,10 @@ public class SnailVision {
     }
 
     public void trackTargetPosition(){
-        if(useGyro == true){ // Track where the target is to turn towards it quicker
+        if(USE_GYRO == true){ // Track where the target is to turn towards it quicker
             horizontalAngleFromTarget = getRotationalAngle();
         }
-        else if (useGyro == false){ // Track where the target last left the screen to turn towards there
+        else if (USE_GYRO == false){ // Track where the target last left the screen to turn towards there
             if(TargetV.get(0) == true){ // Once the target is off screen, the function saves the last seen side 
                 horizontalAngleFromTarget = TargetX.get(0); 
             }
@@ -344,13 +342,13 @@ public class SnailVision {
     }
     
     public double getRotationalAngle(){ // Angle of the robot as it rotates
-        if(rotationalAxis == "yaw"){
+        if(ROTATIONAL_AXIS == "yaw"){
             return getYawAngle(); // Even though yaw has a reset funciton it is used with resetAngle so that an origin could be set
         }
-        else if(rotationalAxis == "roll"){
+        else if(ROTATIONAL_AXIS == "roll"){
             return getRollAngle(); // resetAngle is here to act as a reset function
         }
-        else if(rotationalAxis == "pitch"){
+        else if(ROTATIONAL_AXIS == "pitch"){
             return getPitchAngle(); // resetAngle is here to act as a reset function
         }
         else{
@@ -359,13 +357,13 @@ public class SnailVision {
     }
 
     public void resetRotationalAngle(){
-        if(rotationalAxis == "yaw"){
+        if(ROTATIONAL_AXIS == "yaw"){
             resetAngle = navx.getYaw(); // Even though yaw has a reset funciton it is used like this so that an origin could be set
         }
-        else if(rotationalAxis == "roll"){
+        else if(ROTATIONAL_AXIS == "roll"){
             resetAngle = navx.getRoll();
         }
-        else if(rotationalAxis == "pitch"){
+        else if(ROTATIONAL_AXIS == "pitch"){
             resetAngle = navx.getPitch();
         }
     }
@@ -383,13 +381,13 @@ public class SnailVision {
     }
 
     public double getAccelleration() {
-        if(rotationalAxis == "yaw"){
+        if(ROTATIONAL_AXIS == "yaw"){
            return(navx.getRawAccelX());
         }
-        else if(rotationalAxis == "roll"){
+        else if(ROTATIONAL_AXIS == "roll"){
             return(navx.getRawAccelY());
         }
-        else if(rotationalAxis == "pitch"){
+        else if(ROTATIONAL_AXIS == "pitch"){
             return(navx.getRawAccelZ());
         }   
         else{
