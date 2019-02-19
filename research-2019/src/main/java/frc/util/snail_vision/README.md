@@ -73,6 +73,8 @@ int {integer} = {number}
 
 ## The SnailVision Object
 
+
+
 ## Constants and Options
 Constants and options contains values that could be changed to change options and such by using 
 
@@ -80,11 +82,49 @@ Constants and options contains values that could be changed to change options an
 {snail-vision-object}.{variable} = {value};
 ``` 
 
+## angleCorrect Constants
+
+### ANGLE_CORRECT_P
+
+### ANGLE_CORRECT_F
+
+### ANGLE_CORRECT_MIN_ANGLE
+
+
+## getInDistance Constants
+
+### GET_IN_DISTANCE_P
+
+### GET_IN_DISTANCE_ERROR
+
+### DISTANCE_ESTIMATION_METHOD
+
+### TARGETS
+
+
+## trigDistance Constants
+
+### CAMERA_HEIGHT
+
+### CAMERA_ANGLE
+
+
+## Gyro Constants
+
+### USE_GYRO
+
+### ROTATIONAL_AXIS
+
+
+
 ## Retrievable Data
 Retrievable data contains values that are calculated by Snail Vision during operation and might be useful depending on the situation.
 
+
+
 ## Functions
 Functions describes all of the functions used by Snail Vision.
+
 
 ## Vision Functions
 
@@ -104,6 +144,7 @@ Functions describes all of the functions used by Snail Vision.
 
 ### changePipeline
 
+
 ## Data Collection Functions
 
 ### findCameraAngle
@@ -117,6 +158,7 @@ Functions describes all of the functions used by Snail Vision.
 ### printTargetArea
 
 ### printIterationTime
+
 
 ## Limelight Functions
 
@@ -147,6 +189,8 @@ Functions describes all of the functions used by Snail Vision.
 ### getAccelleration
 
 ### calculateJerk
+
+
 
 ## Contact Information
 Snail Vision was created by Adam Zamlynny in 2019. Feel free to contact me at azamlynny@hotmail.com if you have any questions!
