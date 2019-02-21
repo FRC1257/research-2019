@@ -161,28 +161,70 @@ Example: The robot needs to check whether it saw the target exactly 3 frames ago
 ```
 
 ### TargetX
-TargetX represents the horizontal angle the target is from the center of the camera's vision (or crosshair)
+**Datatype:** Double ArrayList
+
+
+TargetX represents the horizontal angle the target is from the center of the camera's vision (or crosshair) measured in degrees.
 
 ### TargetY
+**Datatype:** Double ArrayList
+
+
+TargeyY represents the vertical angle the target is from the center of the camera's vision (or crosshair) measured in degrees.
 
 ### TargetA
+**Datatype:** Double ArrayList
+
+
+TargetA represents the percent area of the screen the bounding box around the target on the screen takes up; the area of the screen taken up by the target.
 
 ### TargetV
+**Datatype:** Boolean ArrayList
+
+
+TargetV represents whether the target is on the screen or not.
 
 ### TargetS
+**Datatype:** Double ArrayList
+
+
+TargetS represents the rotation/skew of the target measured in degrees.
 
 ### Latency
+**Datatype:** Short ArrayList
+
+
+Latency is time time it takes for the feed from the camera to get to the RoboRIO.
 
 ### TargetShort
+**Datatype:** Double ArrayList
+
+
+TargetShort is the short side of the target measured in pixels.
 
 ### TargetLong
+**Datatype:** Double ArrayList
+
+
+TargetLong is the long side of the target measured in pixels.
 
 ### TargetHorizontal
+**Datatype:** Double ArrayList
+
+
+TargetHorizontal is the horizontal side of the target measured in pixels.
 
 ### TargetVertical
+**Datatype:** Double ArrayList
+
+
+TargetVertical is the vertical side of the target measured in pixels.
 
 ### currentPipeline
+**Datatype:** Byte 
 
+
+currentPipeline is the current pipeline settings of the camera. Byte to conserve memory.
 
 ## Gyro Data
 
