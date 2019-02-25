@@ -42,10 +42,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit () {
 
-        FrontLeft = new WPI_TalonSRX(3);
-        BackLeft = new WPI_TalonSRX(6);
-        BackRight = new WPI_TalonSRX(1);
-        FrontRight = new WPI_TalonSRX(2);
+        FrontLeft = new WPI_TalonSRX(1);
+        BackLeft = new WPI_TalonSRX(2);
+        BackRight = new WPI_TalonSRX(3);
+        FrontRight = new WPI_TalonSRX(4);
 
         Right = new SpeedControllerGroup(FrontRight, BackRight);
         Left = new SpeedControllerGroup(FrontLeft, BackLeft);
@@ -109,9 +109,10 @@ public class Robot extends TimedRobot {
         }
 
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0){ //If left trigger pressed and a target on screen then turn to it
-            
             turnSpeed += vision.angleCorrect();
         }
+
+        DriveTrain.arcadeDrive(driveSpeed, turnSpeed);
     }
  
 }
