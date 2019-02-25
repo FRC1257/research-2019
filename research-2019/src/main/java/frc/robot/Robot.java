@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;
 import java.util.ArrayList;
-import com.kauailabs.navx.frc.*;
 import frc.util.snail_vision.*;
 import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.*;
