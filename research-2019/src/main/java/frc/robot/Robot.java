@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.networktables.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import java.util.*;
+import java.io.*;
 
 import edu.wpi.first.wpilibj.I2C.Port;
 
@@ -35,10 +37,12 @@ public class Robot extends TimedRobot {
     Boolean rightStickPressed;
     double driveSpeed;
     double turnSpeed;
-    
+    int savedData;
+
     SnailVision vision;
     public static final double[] AREA_TO_DISTANCE_ROCKET = {1};
     public static final double[] AREA_TO_DISTANCE_SHIP = {1};
+    PrintWriter out;
 
     @Override
     public void robotInit () {
@@ -74,8 +78,14 @@ public class Robot extends TimedRobot {
         vision.TARGETS.add(new Target(0, 12, 60, AREA_TO_DISTANCE_SHIP));
         // SmartDashboard.putNumber("kP", -0.3);
         // SmartDashboard.putNumber("min_command", 0.05); 
-    }
 
+        try{
+            out = new PrintWriter(new BufferedWriter(new FileWriter("VisionPrediction.csv")));
+        }
+        catch(IOException e){}
+
+        savedData = 0;
+    }
     @Override
     public void teleopInit () {
 
@@ -89,6 +99,17 @@ public class Robot extends TimedRobot {
         driveSpeed = 0;
         turnSpeed = 0;
 
+        if(savedData < 54000){
+            savedData++;
+            // Latency, Tx, Ty, Horizontal, Vertical, Skew, robot angle, turn velocity, turn accelleration, Target Area, Target Visibility
+            out.println(vision.Latency.get(0) + "," + vision.TargetX.get(0) + "," + vision.TargetY.get(0) + "," + vision.TargetHorizontal.get(0) + "," + vision.TargetVertical.get(0) + "," + vision.TargetS.get(0) + "," + vision.getRotationalAngle() + "," + vision.navx.getVelocityX() + "," +  + vision.getAccelleration() + "," + vision.TargetA.get(0) + "," + vision.TargetV.get(0));
+            vision.resetRotationalAngle();
+        } 
+       
+        if(savedData == 54000){// 10 minutes
+            out.close();
+            savedData++;
+        }
          // Basic Teleop Drive Code
          if(Controller.getAButton()) {
             double y = Controller.getY(GenericHID.Hand.kLeft);
@@ -108,6 +129,15 @@ public class Robot extends TimedRobot {
             driveSpeed = -y;
             turnSpeed = x;
         }
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kRight)){
+            vision.recordTargetArea();
+        }
+        if(Controller.getStickButtonReleased(GenericHID.Hand.kRight)){
+            vision.clearTargetArea();
+        }
+        if(Controller.getStickButtonPressed(GenericHID.Hand.kLeft)){
+            vision.printTargetArea();
+        }
 
         if(Controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0){ //If left trigger pressed and a target on screen then turn to it
             
@@ -115,4 +145,5 @@ public class Robot extends TimedRobot {
         }
     }
  
+
 }
