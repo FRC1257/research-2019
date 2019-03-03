@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
     double driveSpeed;
     double turnSpeed;
     int savedData;
+    int dataPoints;
 
     SnailVision vision;
     public static final double[] AREA_TO_DISTANCE_ROCKET = {1};
@@ -87,6 +88,7 @@ public class Robot extends TimedRobot {
         }
 
         savedData = 0;
+        dataPoints = 10000;
     }
     @Override
     public void teleopInit () {
@@ -101,7 +103,7 @@ public class Robot extends TimedRobot {
         driveSpeed = 0;
         turnSpeed = 0;
 
-        if(savedData < 10000){
+        if(savedData < dataPoints){
             savedData++;
             System.out.println(savedData);
             // Latency, Tx, Ty, Horizontal, Vertical, Skew, robot angle, turn velocity, turn accelleration, Target Area, Target Visibility
@@ -109,11 +111,11 @@ public class Robot extends TimedRobot {
             vision.resetRotationalAngle();
         } 
        
-        if(savedData == 10000){// 10 minutes = 30000 
+        if(savedData == dataPoints){// 10 minutes = 30000 
             out.close();
             savedData++;
         }
-        if(savedData > 10000){
+        if(savedData > dataPoints){
             System.out.println("Finished Gathering Data");
         }
          // Basic Teleop Drive Code
