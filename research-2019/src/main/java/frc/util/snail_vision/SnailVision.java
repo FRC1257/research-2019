@@ -70,7 +70,7 @@ public class SnailVision {
         USE_GYRO = utilizeGyro;
         if(USE_GYRO == true){
             ROTATIONAL_AXIS = "yaw"; // Default is yaw
-            navx = new AHRS(Port.kMXP);
+            navx = new AHRS(SPI.Port.kMXP);
             pastAccelleration = 0;
             currentAccelleration = 0;
             Timer = new Timer();

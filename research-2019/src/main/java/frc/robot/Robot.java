@@ -39,6 +39,8 @@ public class Robot extends TimedRobot {
     double turnSpeed;
     int savedData;
     int dataPoints;
+        public AHRS navx;
+
 
     SnailVision vision;
     public static final double[] AREA_TO_DISTANCE_ROCKET = {1};
@@ -99,6 +101,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic () {
         // NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
         vision.networkTableFunctionality(NetworkTableInstance.getDefault().getTable("limelight"));
+        SmartDashboard.putNumber("Angle", vision.getYawAngle());
 
         driveSpeed = 0;
         turnSpeed = 0;
